@@ -1,0 +1,118 @@
+
+<style type="text/css">
+	body
+	{
+		background-color: #dedede
+	}
+	button
+	{
+		cursor: pointer;
+	}
+</style>
+<div ng-controller='dashboardController'>
+    <%-  include('part/header.ejs') %>
+    <br><br><br>
+
+    <div class="row" style="position: fixed; width: 100vw">
+		<div class="col-md-3">
+			<div class="container">
+                <div class="card card-user">
+                    <div class="card-image">
+                        <img src="https://ununsplash.imgix.net/photo-1431578500526-4d9613015464?fit=crop&fm=jpg&h=300&q=75&w=400" alt="...">
+                    </div>
+                    <div class="card-body">
+                        <div class="author">
+                            <a href="#">
+                                <img class="avatar border-gray" src="res/res/homepage.jpg" alt="...">
+                                <h5 class="title">Justine Che T. Romero</h5>
+                            </a>
+                        </div>
+		                <hr>
+		                <small> Courses </small>
+		                <ul class="list-group small">
+		                	<li style="padding: 4px; padding-left: 20px" class="list-group-item">Basic Programming</li>
+		                	<li style="padding: 4px; padding-left: 20px" class="list-group-item">Software Dev</li>
+		                	<li style="padding: 4px; padding-left: 20px" class="list-group-item">Competitive Programming</li>
+		                	<li style="padding: 4px; padding-left: 20px" class="list-group-item">+ Add new</li>
+		                </ul>
+		                <small> Groups </small>
+		                <ul class="list-group small">
+		                	<li style="padding: 4px; padding-left: 20px" class="list-group-item">Grade 7</li>
+		                	<li style="padding: 4px; padding-left: 20px" class="list-group-item">Grade 8</li>
+		                	<li style="padding: 4px; padding-left: 20px" class="list-group-item">+</li>
+		                </ul>
+                    </div>
+                    <hr>
+                </div>
+			</div>
+		</div>
+		<div class="col-md-6">
+		</div>
+		<div class="col-md-3">
+			<div class="container">
+				<div class="card">
+					<div class="card-body">
+						<b>Active</b>
+						<hr>
+						<ul class="list-group"> 
+							<li ng-repeat='i in [1,2,3,4,5]' class="list-group-item">
+								<i class="fa fa-location-arrow" style="color: #22aa22"></i>
+								Justine Che T. Romero
+							</li>
+
+						</ul>
+						<br>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-3"></div>
+
+		<div class="col-md-6">
+			<div class="card" ng-if='!editor.active'>
+				<div class="card-body">
+					<input ng-click='editor.open()' class="form-control disabled" type="text" placeholder="Write something">
+				</div>
+			</div>
+			<div class="card" ng-show='editor.active'>
+				<div class="card-body">
+					<br>
+					<div>
+						<div id="editor-container" style="height: 150px"></div>
+					</div>
+					<div class="float-right">
+						<br>
+						<button class="btn btn-danger btn-fill btn-round" ng-click='editor.close()'>Discard</button>
+						<button class="btn btn-success btn-fill btn-round">Post</button>
+					</div>
+				</div>
+			</div>
+			<div class="card" ng-repeat=' i in [1,2,3,5,6,7,8,9,10,11,12]'>
+				<div class="card-body" style="padding: 0">
+					<div class="container">
+						<br>
+						<b>Random Person</b> | <small>Basic Programming > Posts </small>
+						<hr>
+						<h4>References for?</h4>
+						<p>
+							Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+							tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+							quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+							consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+							cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+							proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+						</p>
+						<button class="btn btn-sm btn-round btn-fill ">25 &nbsp <i class="fa fa-heart"></i></button> 
+						<button class="btn btn-sm btn-round btn-fill ">5 &nbsp <i class="fa fa-retweet"></i></button> 
+						<button class="btn btn-sm btn-round btn-fill ">30 &nbsp <i class="fa fa-comment"></i></button> 
+						<hr>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-3"></div>
+
+	</div>
+</div>
