@@ -248,7 +248,7 @@
 								<input type="text" class="form-control">
 								<button class="btn btn-fill" type="submit"><i class="fa fa-search"></i></button>
 								&nbsp&nbsp&nbsp
-								<button type="button"  class="btn btn-fill btn-success" data-toggle="modal" data-target="#user-form-modal">Add new</button>
+								<button type="button"  class="btn btn-fill btn-success" data-toggle="modal" ng-click='pages.root.modal.add()'>Add new</button>
 							</form>
 							<hr>
 							<div style="overflow: scroll; width: 100%; max-height: 100vh;">
@@ -269,7 +269,7 @@
 											<td>{{ i.secondary.batch }}</td>
 											<td>{{ i.secondary.school }}</td>
 											<td>
-												<a href="javascript:void(0)" style="cursor: pointer;" ng-click='' >
+												<a href="javascript:void(0)" style="cursor: pointer;" ng-click='pages.root.modal.edit(i)' >
 													<i style="color: green" class="fa fa-edit"></i> 
 												</a>
 												&nbsp&nbsp&nbsp
@@ -301,7 +301,9 @@
 		  <div style="padding-top: 0px; transform: translate(0%,0%);" class="modal-dialog modal-dialog-centered" role="document">
 		    <div class="modal-content">
 		      <div class="modal-header">
-		        <h5 class="modal-title" id="user-form-modal-Label">Manually Add New User</h5>
+		        <h5 class="modal-title" id="user-form-modal-Label">
+		        	{{ pages.root.modal.title }}
+		        </h5>
 		        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
 		          <span aria-hidden="true">&times;</span>
 		        </button>
@@ -313,10 +315,10 @@
 		      		<div class="alert alert-danger" ng-if=' !pages.root.modal.username_available '>Username is not available</div>
 					<input ng-change='pages.root.modal.is_username_available()' ng-class='{ "is-invalid" : !pages.root.modal.username_available }' required type="text" class="form-control" ng-model='pages.root.modal.form.username' placeholder="Username">
 		      		<small>Password</small>
-					<input required type="password" class="form-control" ng-model='pages.root.modal.form.password' placeholder="Password">
+					<input ng-required='pages.root.modal.mode=="add"' type="password" class="form-control" ng-model='pages.root.modal.form.password' placeholder="Password">
 		      		<small>Retype Password</small>
 		      		<div class="alert alert-danger" ng-if=' !pages.root.modal.password_match() && ( pages.root.modal.form.rpassword ) '>Passwords don't match</div>
-					<input required type="password" class="form-control" ng-class='{"is-invalid": !pages.root.modal.password_match() && pages.root.modal.form.rpassword  }' ng-model='pages.root.modal.form.rpassword' placeholder="Re-enter Password">
+					<input ng-required='pages.root.modal.mode=="add"' type="password" class="form-control" ng-class='{"is-invalid": !pages.root.modal.password_match() && pages.root.modal.form.rpassword  }' ng-model='pages.root.modal.form.rpassword' placeholder="Re-enter Password">
 					
 
 		      		<b>Basic Information</b>

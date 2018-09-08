@@ -226,6 +226,15 @@ app.controller("dashboardController",($scope,$http,$location) => {
 
 		page.modal.submit = ()=>
 		{
+			if(page.modal.mode == "add")
+				page.modal.submit_add();
+			else
+				page.modal.submit_edit();
+
+		}
+
+		page.modal.submit_add = ()=>
+		{
 			page.modal.prompt = false;
 			let form = page.modal.form;
 			if(form.password != form.rpassword || !page.modal.username_available)
@@ -252,6 +261,36 @@ app.controller("dashboardController",($scope,$http,$location) => {
 			});
 		}
 
+		page.modal.submit_edit = ()=>
+		{
+			page.modal.prompt = false;
+			let form = page.modal.form;
+			// alert(form.password);
+			if((form.password != form.rpassword ) && form.password )
+			{
+				page.modal.prompt = true;
+				return;
+			}
+			$http.post('/api/user/edit',{token:token,form:form,id:page.modal.target }).then((res)=>{
+				$('#user-form-modal').modal('toggle');
+				res = res.data;
+				if(res.err)
+				{
+					notify(res.err,"danger");
+					return console.log(res.err);
+				}
+				else
+				{
+					form={username: "",password: "",rpassword: "",name:{last: "",first: "",middle: "",},email: "",secondary:{school: "",batch: "",},priv: [],};
+					notify(`<b>Edit User</b>
+							<p>` + res.mes +`</p>
+						`,"success");
+					page.onload();
+				}
+			});
+
+		}
+
 		page.onload =()=>
 		{
 			$http.post('/api/user',{token:token}).then((res)=>{
@@ -268,6 +307,22 @@ app.controller("dashboardController",($scope,$http,$location) => {
 					page.users.list = res;
 				}
 			});
+		}
+
+		page.modal.title = "";
+		page.modal.add = () =>
+		{
+			page.modal.title = "Manually Add New User";
+			page.modal.mode = "add";
+			$('#user-form-modal').modal('toggle');
+		}
+		page.modal.edit = (obj) =>
+		{
+			page.modal.title = "Edit User information.";
+			page.modal.mode = "edit";
+			page.modal.target = obj._id;
+			page.modal.form = obj;
+			$('#user-form-modal').modal('toggle');
 		}
 
 		page.onload();

@@ -5,6 +5,7 @@ var fs = require('fs');
 var pth = require('path');
 var jwt = require('./jwt-ee.js');
 var MongoClient = require('mongodb').MongoClient;
+var ObjectId = require('mongodb').ObjectID;
 var SHA256 = require('crypto-js/SHA256');
 var url = 'mongodb://localhost:27017/';
 var db;
@@ -32,7 +33,7 @@ function validate(priv,req,res,f_)
 	var payload  = jwt.validate(token);
 	if(payload)
 	{
-		db.collection('user').findOne({username:payload.username},(err,result)=>{
+		db.collection('user').findOne({_id:ObjectId(payload._id)},(err,result)=>{
 			if(err) return console.log(err);
 			if(result)
 			{
@@ -65,7 +66,6 @@ app.post('/api/auth',(req,res)=>{
 			if(result)
 			{
 				delete result.password;
-				delete result._id;
 				console.log(result);
 				//generate token
 				var  token = jwt.new( result );
@@ -79,7 +79,16 @@ app.post('/api/auth',(req,res)=>{
 //users
 app.post('/api/user',(req,res)=>{
 	validate("admin",req,res,(id)=>{
-		db.collection('user').find({},{ projection:{_id:1, name: 1, secondary: 1} }).toArray((err, result)=>{
+		db.collection('user').find({},{ projection:
+			{
+				_id:1, 
+				username: 1,
+				email: 1,
+				priv : 1,
+				name: 1, 
+				secondary: 1
+			} }
+			).toArray((err, result)=>{
 			if(err) throw err;
 			res.send(result );
 		});
@@ -111,6 +120,28 @@ app.post('/api/user/add',(req,res)=>{
 		(err,result)=>{
 			if(err) throw err;
 			res.send({mes: "User has been succesfully added."});
+		});
+	});
+});
+app.post('/api/user/edit',(req,res)=>{
+	validate("admin",req,res,(id)=>{
+		let form = req.body.form;
+
+		if(form._id) delete form._id;
+		if(form.password)
+		{
+			form.password  = SHA256(form.password + settings.secret).toString();
+		}
+
+		console.log(req.body.id);
+		db.collection('user').updateOne({_id: ObjectId(req.body.id) },
+		{
+			$set : form,
+		},
+		(err,result)=>{
+			if(err) throw err;
+			console.log(result.result.nModified+" files updated. ");
+			res.send({mes: "User information has succesfully updated."});
 		});
 	});
 });
