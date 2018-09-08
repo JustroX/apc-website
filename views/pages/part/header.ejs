@@ -1,5 +1,5 @@
 
-<nav class="navbar navbar-expand-lg " color-on-scroll="500" style="position: fixed; width: 100vw; z-index: 1">
+<nav class="navbar navbar-expand-lg " color-on-scroll="500" style="position: fixed; width: 100vw; z-index: 2">
     <div class=" container-fluid  ">
         <a class="navbar-brand" href="#pablo"> Advanced Programming Club </a>
         <button href="" class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
@@ -10,56 +10,72 @@
         <div class="collapse navbar-collapse justify-content-end" id="navigation">
             <ul class="nav navbar-nav mr-auto">
                 <li class="nav-item">
-                    <a href="#" class="nav-link" data-toggle="dropdown">
-                        <i class="nc-icon nc-palette"></i>
+                    <a href="javascript:void(0)" class="nav-link" data-toggle="dropdown">
                         <span class="d-lg-none">Advanced Programming Club </span>
                     </a>
                 </li>
                 <li class="dropdown nav-item">
-                    <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">
-                        <i class="nc-icon nc-planet"></i>
-                        <span class="notification">5</span>
-                        <span class="d-lg-none">Notification</span>
+                    <a href="javascript:void(0)" class="nav-link" ng-click='goto("home")'>
+                        Home
+                    </a>
+                    <a href="javascript:void(0)" class=" nav-link" >
+                        Courses
+                    </a>
+                    <a href="javascript:void(0)" class=" nav-link" >
+                        Groups
                     </a>
                     <ul class="dropdown-menu">
-                        <a class="dropdown-item" href="#">Notification 1</a>
-                        <a class="dropdown-item" href="#">Notification 2</a>
-                        <a class="dropdown-item" href="#">Notification 3</a>
-                        <a class="dropdown-item" href="#">Notification 4</a>
-                        <a class="dropdown-item" href="#">Another notification</a>
+                        <a class="dropdown-item" href="javascript:void(0)">Notification 1</a>
+                        <a class="dropdown-item" href="javascript:void(0)">Notification 2</a>
+                        <a class="dropdown-item" href="javascript:void(0)">Notification 3</a>
+                        <a class="dropdown-item" href="javascript:void(0)">Notification 4</a>
+                        <a class="dropdown-item" href="javascript:void(0)">Another notification</a>
                     </ul>
+                    &nbsp&nbsp&nbsp&nbsp
+                    &nbsp&nbsp&nbsp&nbsp
+                    &nbsp&nbsp&nbsp&nbsp
+                    &nbsp&nbsp&nbsp&nbsp
                 </li>
                 <li class="nav-item">
-                    <a href="#" class="nav-link">
-                        <i class="nc-icon nc-zoom-split"></i>
-                        <span class="d-lg-block">&nbsp;Search</span>
-                    </a>
+                    <input type="" name="" class="form-control" placeholder="Search...">
+                </li>
+                <li class="nav-item">
+                    <button class="btn btn-round btn-default">Go</button>
                 </li>
             </ul>
             <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="#pablo">
-                        <span class="no-icon">Account</span>
-                    </a>
-                </li>
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="http://example.com" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <span class="no-icon">Dropdown</span>
+                    <a class="nav-link dropdown-toggle" href="http://example.com" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="false" aria-expanded="false">
+                        <span class="no-icon"> Options  </span>
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                        <a class="dropdown-item" href="#">Action</a>
-                        <a class="dropdown-item" href="#">Another action</a>
-                        <a class="dropdown-item" href="#">Something</a>
-                        <a class="dropdown-item" href="#">Something else here</a>
+                        <button class="dropdown-item">Account</button>
+                        <button class="dropdown-item">Settings</button>
                         <div class="divider"></div>
-                        <a class="dropdown-item" href="#">Separated link</a>
+                        <div ng-if='user.priv.includes("admin")'>
+                            <button ng-click='goto("root/")' class="dropdown-item">Root Access</button>
+                        </div>
+                        <button class="dropdown-item">Administration</button>
+                        <button class="dropdown-item">Feedback</button>
+                        <div class="divider"></div>
+                        <button class="dropdown-item">Cookie Use</button>
+                        <button class="dropdown-item">Privacy Policy</button>
+                        <button class="dropdown-item">Terms and Conditions</button>
+                        <div class="divider"></div>
+                        <button ng-click='logout()' class="dropdown-item">Log Out</button>
                     </div>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#pablo">
-                        <span class="no-icon">Log out</span>
+                    <a class="nav-link" href="javascript::void()">
+                        <span class="no-icon">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</span>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="javascript::void()">
+                        <span class="no-icon">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</span>
+                    </a>
+                </li>
+
             </ul>
         </div>
     </div>

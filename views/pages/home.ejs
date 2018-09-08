@@ -1,26 +1,35 @@
+<style type="text/css">
+	button
+	{
+		cursor: pointer;
+	}
+</style>
 
-
-<div ng-controller='homeController'>
+<div ng-controller='authController'>
 	<section>
 		<div class="container">
 			<br><br><br><br><br>
 			<h2>PSHS-BRC Advanced Programming Club</h2>
 			<p>
 				Lorem ipsum dolor sit amet, consectetur adipisicing elit
+				<div ng-if='loading'>Logging in...</div>
+				<div ng-if='auth_failed' style="color: red">Authentication Failed</div>
 			</p>
 			<hr>
 			<div class="container text-left" >
-				<div class="row">
-					<div class="col-md-2">
-						<input class="form-control" type="" name="" placeholder="Username">
-					</div>
-					<div class="col-md-2">
-						<input class="form-control" type="" name="" placeholder="Password">
-					</div>
-					<button class="btn btn-round btn-fill btn-success">Log In</button>
-					&nbsp
-					<button class="btn btn-round btn-fill ">Sign Up</button>
-				</div>	
+				<form ng-submit='submit()'>
+					<div class="row">	
+						<div class="col-md-2">
+							<input class="form-control" type="text" ng-model='form.username' placeholder="Username">
+						</div>
+						<div class="col-md-2">
+							<input class="form-control" type="password" ng-model='form.password' placeholder="Password">
+						</div>
+						<button class="btn btn-round btn-fill btn-success" type="submit">Log In</button>
+						&nbsp
+						<button class="btn btn-round btn-fill " type="button">Sign Up</button>
+					</div>	
+				</form>
 			</div>
 		</div>
 	</section>

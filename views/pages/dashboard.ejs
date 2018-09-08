@@ -11,108 +11,355 @@
 </style>
 <div ng-controller='dashboardController'>
     <%-  include('part/header.ejs') %>
-    <br><br><br>
+    <br><br><br><br>
+	
 
-    <div class="row" style="position: fixed; width: 100vw">
-		<div class="col-md-3">
-			<div class="container">
-                <div class="card card-user">
-                    <div class="card-image">
-                        <img src="https://ununsplash.imgix.net/photo-1431578500526-4d9613015464?fit=crop&fm=jpg&h=300&q=75&w=400" alt="...">
-                    </div>
-                    <div class="card-body">
-                        <div class="author">
-                            <a href="#">
-                                <img class="avatar border-gray" src="res/res/homepage.jpg" alt="...">
-                                <h5 class="title">Justine Che T. Romero</h5>
-                            </a>
-                        </div>
-		                <hr>
-		                <small> Courses </small>
-		                <ul class="list-group small">
-		                	<li style="padding: 4px; padding-left: 20px" class="list-group-item">Basic Programming</li>
-		                	<li style="padding: 4px; padding-left: 20px" class="list-group-item">Software Dev</li>
-		                	<li style="padding: 4px; padding-left: 20px" class="list-group-item">Competitive Programming</li>
-		                	<li style="padding: 4px; padding-left: 20px" class="list-group-item">+ Add new</li>
-		                </ul>
-		                <small> Groups </small>
-		                <ul class="list-group small">
-		                	<li style="padding: 4px; padding-left: 20px" class="list-group-item">Grade 7</li>
-		                	<li style="padding: 4px; padding-left: 20px" class="list-group-item">Grade 8</li>
-		                	<li style="padding: 4px; padding-left: 20px" class="list-group-item">+</li>
-		                </ul>
-                    </div>
-                    <hr>
+    <!-- //profile -->
+	<div style="position: fixed; width: 25vw; z-index: 1">
+		<div class="container">
+            <div class="card card-user">
+                <div class="card-image">
+                    <img src="https://ununsplash.imgix.net/photo-1431578500526-4d9613015464?fit=crop&fm=jpg&h=300&q=75&w=400" alt="...">
                 </div>
-			</div>
-		</div>
-		<div class="col-md-6">
-		</div>
-		<div class="col-md-3">
+                <div class="card-body">
+                    <div class="author">
+                        <a href="#">
+                            <img class="avatar border-gray" src="res/res/homepage.jpg" alt="...">
+                            <h5 class="title">{{ user.name.first + " " + user.name.middle[0] + ". " + user.name.last }}</h5>
+                        </a>
+                    </div>
+	                <hr>
+	                <small> Courses </small>
+	                <ul class="list-group small">
+	                	<li style="padding: 4px; padding-left: 20px" class="list-group-item">Basic Programming</li>
+	                	<li style="padding: 4px; padding-left: 20px" class="list-group-item">Software Dev</li>
+	                	<li style="padding: 4px; padding-left: 20px" class="list-group-item">Competitive Programming</li>
+	                	<li style="padding: 4px; padding-left: 20px" class="list-group-item">+ Add new</li>
+	                </ul>
+	                <small> Groups </small>
+	                <ul class="list-group small">
+	                	<li style="padding: 4px; padding-left: 20px" class="list-group-item">Grade 7</li>
+	                	<li style="padding: 4px; padding-left: 20px" class="list-group-item">Grade 8</li>
+	                	<li style="padding: 4px; padding-left: 20px" class="list-group-item">+</li>
+	                </ul>
+                </div>
+                <hr>
+            </div>
+
 			<div class="container">
-				<div class="card">
-					<div class="card-body">
-						<b>Active</b>
-						<hr>
+				<div class="text-muted" style="position: absolute;bottom: 0px">
+					<small>&nbsp&nbsp&nbsp About | Privacy | Terms | Cookies | Feedback </small>
+				</div>
+			</div>
+			
+		</div>
+
+	</div>
+	
+	<div style="position: fixed; right: 0px; bottom: 0px; width: 25vw; font-size: 8pt; padding-left: 0px;; z-index: 1 ">
+		<div class="container">
+			<div class="card">
+				<div class="card-body">
+					<b>Active</b>
+					<hr>
+					<div style="overflow-y: scroll;
+								  height: 50vh;">
 						<ul class="list-group"> 
-							<li ng-repeat='i in [1,2,3,4,5]' class="list-group-item">
+							<li ng-repeat='i in [1,2,3,4,5,6,7,8]' class="list-group-item">
 								<i class="fa fa-location-arrow" style="color: #22aa22"></i>
 								Justine Che T. Romero
 							</li>
-
 						</ul>
-						<br>
 					</div>
+					<br>
 				</div>
 			</div>
 		</div>
 	</div>
+
+
 	<div class="row">
 		<div class="col-md-3"></div>
 
 		<div class="col-md-6">
-			<div class="card" ng-if='!editor.active'>
-				<div class="card-body">
-					<input ng-click='editor.open()' class="form-control disabled" type="text" placeholder="Write something">
-				</div>
-			</div>
-			<div class="card" ng-show='editor.active'>
-				<div class="card-body">
-					<br>
-					<div>
-						<div id="editor-container" style="height: 150px"></div>
-					</div>
-					<div class="float-right">
-						<br>
-						<button class="btn btn-danger btn-fill btn-round" ng-click='editor.close()'>Discard</button>
-						<button class="btn btn-success btn-fill btn-round">Post</button>
+			<div ng-if='is_here("home")'>
+				<div class="card" ng-if='!editor.active'>
+					<div class="card-body">
+						<small> <b>Home</b> > Post</small>
+						<input ng-click='editor.open()' class="form-control disabled" type="text" placeholder="Write something">
 					</div>
 				</div>
-			</div>
-			<div class="card" ng-repeat=' i in [1,2,3,5,6,7,8,9,10,11,12]'>
-				<div class="card-body" style="padding: 0">
-					<div class="container">
-						<br>
-						<b>Random Person</b> | <small>Basic Programming > Posts </small>
-						<hr>
-						<h4>References for?</h4>
-						<p>
-							Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-							tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-							quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-							consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-							cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-							proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-						</p>
-						<button class="btn btn-sm btn-round btn-fill ">25 &nbsp <i class="fa fa-heart"></i></button> 
-						<button class="btn btn-sm btn-round btn-fill ">5 &nbsp <i class="fa fa-retweet"></i></button> 
-						<button class="btn btn-sm btn-round btn-fill ">30 &nbsp <i class="fa fa-comment"></i></button> 
-						<hr>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="col-md-3"></div>
 
+				<div class="card" ng-show='editor.active' style="box-shadow:0px 0px 10px 1px rgba(0,0,0,0.3)">
+					<div class="card-body">
+						<small> <b>Home</b> > Post</small>
+						<br>
+						<div>
+							<div id="editor-container" style="height: 150px"></div>
+						</div>
+						<div class="float-right">
+							<br>
+							<button class="btn btn-danger btn-fill btn-round" ng-click='editor.close()'>Discard</button>
+							<button class="btn btn-success btn-fill btn-round">Post</button>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div ng-if='false'>
+				<!-- GROUPS -->
+				<div ng-if='false' class="card">
+					<div class="card-body">
+						<div class="container">
+							<br>
+							 GROUPS
+							<br><br>
+
+							<div class="row">
+								<div class="col-md-4" ng-repeat=' i in [1,2,3] '>
+									<div class="card">
+										<div class="card-body">
+											<small></small>
+											<i class="fa fa-star"></i> <b>Grade 8 - Pips</b>
+											<hr>
+											<p>
+												<small>
+													Members: 2 <br>
+													Points: 23
+												</small>
+											</p>
+										</div>
+									</div>
+								</div>
+							</div>
+
+
+							<div class="text-center">
+								<div class="btn btn-round text-center">LOAD MORE</div>
+							</div>
+							<br><br>
+						</div>
+					</div>
+				</div>
+
+				<!-- COURSES -->
+				<div ng-if='false' class="card">
+					<div class="card-body">
+						<div class="container">
+							<br>
+							PARTICIPATED COURSES
+							<br><br>
+
+							<div class="card" >
+								<div class="card-body">
+
+									<div ng-repeat='i in [1,2,3,4]'>
+										<b>Introduction to Programming</b>
+										<p style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+											Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+											tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+											quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+											consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+											cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+											proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+										</p>
+										<hr>
+									</div>
+
+									<div class="text-center">
+										<div class="btn btn-round text-center">LOAD MORE</div>
+									</div>
+								</div>							
+							</div>
+							
+
+							<br><br>
+						</div>
+					</div>				
+				</div>
+
+				<!-- MODULES -->
+				<div ng-if='false' class="card">
+					<div class="card-body">
+						<div class="container">
+							<br>
+							YOUR MODULES
+							<br><br>
+							<div class="card" ng-repeat='i in [1,1,1] track by $index'>
+								<div class="card-body">
+									<small><b>Introduction to Programming</b> > Yey</small>
+									 <br>
+									<b>Introduction to Programming</b>
+									<p style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+										Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+										tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+										quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+										consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+										cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+										proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+									</p>
+								</div>
+							</div>
+							<div class="text-center">
+								<div class="btn btn-round text-center">LOAD MORE</div>
+							</div>
+							<br><br>
+						</div>
+					</div>
+				</div>
+
+				<!-- HOME -->
+				<div ng-if='is_here("home")'>
+					<div class="card" ng-repeat=' i in [1,2,3,5,6,7,8,9,10,11,12]'>
+						<div class="card-body" style="padding: 0">
+							<div class="container">
+								<br>
+								<b>Random Person</b> | <small>Basic Programming > Posts </small>
+								<hr>
+								<h4>References for?</h4>
+								<p>
+									Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+									tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+									quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+									consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+									cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+									proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+								</p>
+								<button class="btn btn-sm btn-round btn-fill ">25 &nbsp <i class="fa fa-heart"></i></button> 
+								<button class="btn btn-sm btn-round btn-fill ">5 &nbsp <i class="fa fa-retweet"></i></button> 
+								<button class="btn btn-sm btn-round btn-fill ">30 &nbsp <i class="fa fa-comment"></i></button> 
+								<hr>
+							</div>
+						</div>
+					</div>
+				</div>				
+			</div>
+
+			<div ng-if='is_here("root")'>
+				<div class="card">
+					<div class="card-body">
+						<b>Root Access</b>
+						<hr>
+						<div class="container">
+							<b>Users</b>
+							<p>Edit user information under administrative priveledges.</p>
+
+							<form class="form-inline">
+								<input type="text" class="form-control">
+								<button class="btn btn-fill" type="submit"><i class="fa fa-search"></i></button>
+								&nbsp&nbsp&nbsp
+								<button type="button"  class="btn btn-fill btn-success" data-toggle="modal" data-target="#user-form-modal">Add new</button>
+							</form>
+							<hr>
+							<div style="overflow: scroll; width: 100%; max-height: 100vh;">
+								<table class="table">
+									<thead>
+										<tr>
+											<th>#</th>
+											<th>Fullname</th>
+											<th>Batch</th>
+											<th>School</th>
+											<th>Action</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr style="font-size: 10pt" ng-repeat=' i in pages.root.users.list track by $index'>
+											<td>{{ $index + 1 }}</td>
+											<td>{{ i.name.last + " " + i.name.middle[0] + ". " + i.name.first  }}</td>
+											<td>{{ i.secondary.batch }}</td>
+											<td>{{ i.secondary.school }}</td>
+											<td>
+												<a href="javascript:void(0)" style="cursor: pointer;" ng-click='' >
+													<i style="color: green" class="fa fa-edit"></i> 
+												</a>
+												&nbsp&nbsp&nbsp
+												<a href="javascript:void(0)" style="cursor: pointer;">
+													<i style="color: red" class="fa fa-trash"></i>
+												</a>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+								
+							</div>
+
+						</div>
+						<br><br>
+					</div>
+					
+				</div>
+			</div>
+
+		</div>
+		<div class="col-md-3" >
+		</div>
 	</div>
+	<!-- MODALS -->
+
+	<form ng-submit="pages.root.modal.submit()" >
+		<div class="modal fade" id="user-form-modal" tabindex="-1" role="dialog" aria-labelledby="user-form-modal-Label" aria-hidden="true">
+		  <div style="padding-top: 0px; transform: translate(0%,0%);" class="modal-dialog modal-dialog-centered" role="document">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <h5 class="modal-title" id="user-form-modal-Label">Manually Add New User</h5>
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		          <span aria-hidden="true">&times;</span>
+		        </button>
+		      </div>
+		      <div class="modal-body">
+		      		<b>Authentication Credentials</b>
+		      		<br>
+		      		<small>Username</small>
+		      		<div class="alert alert-danger" ng-if=' !pages.root.modal.username_available '>Username is not available</div>
+					<input ng-change='pages.root.modal.is_username_available()' ng-class='{ "is-invalid" : !pages.root.modal.username_available }' required type="text" class="form-control" ng-model='pages.root.modal.form.username' placeholder="Username">
+		      		<small>Password</small>
+					<input required type="password" class="form-control" ng-model='pages.root.modal.form.password' placeholder="Password">
+		      		<small>Retype Password</small>
+		      		<div class="alert alert-danger" ng-if=' !pages.root.modal.password_match() && ( pages.root.modal.form.rpassword ) '>Passwords don't match</div>
+					<input required type="password" class="form-control" ng-class='{"is-invalid": !pages.root.modal.password_match() && pages.root.modal.form.rpassword  }' ng-model='pages.root.modal.form.rpassword' placeholder="Re-enter Password">
+					
+
+		      		<b>Basic Information</b>
+		      		<br>
+		      		<small>Surname</small>
+					<input required type="text" class="form-control" ng-model='pages.root.modal.form.name.last' placeholder="Surname">
+					<small>First Name</small>
+					<input required type="text" class="form-control" ng-model='pages.root.modal.form.name.first' placeholder="First Name">
+					<small>Middle Name</small>
+					<input required type="text" class="form-control" ng-model='pages.root.modal.form.name.middle' placeholder="Middle Name">
+					<br>
+					<small>Email Address</small>
+					<input required type="email" class="form-control" ng-model='pages.root.modal.form.email'>
+					<hr>
+					<b>Secondary Information</b>
+					<br>
+					<small>School</small>
+					<input required type="text" class="form-control" ng-model='pages.root.modal.form.secondary.school'>			
+					<small>Batch</small>
+					<input required type="text" class="form-control" ng-model='pages.root.modal.form.secondary.batch'>
+					<br>
+					<b>Priveledges</b>
+					<br>
+
+					<div class="container">
+						<input type="checkbox" ng-checked = 'pages.root.modal.form.priv.includes("admin")' ng-click="pages.root.modal.priv_toggle('admin')" > Admin <br>
+						<input type="checkbox" ng-checked = 'pages.root.modal.form.priv.includes("user")' ng-click="pages.root.modal.priv_toggle('user')" > User <br>
+					</div>
+					<hr>
+					<small>
+						By clicking "Save" , the user agree to the <a href="">Terms</a> and have read the <a href="">Data Use Policy</a>, including the <a href="">Cookie Use</a>. 
+					</small>
+		      </div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+		        <div ng-if='pages.root.modal.prompt' class="alert alert-danger">Please provide correct information</div>
+		        <button type="submit" class="btn btn-primary" >Save</button>
+		      </div>
+		    </div>
+		  </div>
+		</div>
+	</form>  
+
 </div>
+
+
