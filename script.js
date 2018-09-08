@@ -145,7 +145,8 @@ app.controller("dashboardController",($scope,$http,$location) => {
 	{	
 		$scope.location = str.split('/');
 		//run controller
-		$scope.pages[str].run();
+		// if(!$scope.pages[$scope.location.join('/')]) alert($scope.location.join('/'));
+		$scope.pages[$scope.location.join('/')].run();
 	}
 	$scope.addPage = (path,_f) =>
 	{
@@ -157,21 +158,42 @@ app.controller("dashboardController",($scope,$http,$location) => {
 	}
 
 	$scope.addPage("home", (page)=>{
-		if(!quill)
-			setTimeout(()=>{
-				quill = new Quill('#editor-container', {
-				  modules: {
-				    toolbar: [
-				      [{ header: [1, 2, false] }],
-				      [{'font':[]}],
-				      ['bold', 'italic', 'underline'],
-				      ['image', 'code-block', 'link']
-				    ]
-				  },
-				  placeholder: 'Write something...',
-				  theme: 'snow'
-				});
-			},1);
+		// if(!quill)
+		setTimeout(()=>{
+			quill = new Quill('#editor-container', {
+			  modules: {
+			    toolbar: [
+			      [{ header: [1, 2, false] }],
+			      [{'font':[]}],
+			      ['bold', 'italic', 'underline'],
+			      ['image', 'code-block', 'link']
+			    ]
+			  },
+			  placeholder: 'Write something...',
+			  theme: 'snow'
+			});
+		},1);
+
+		page.course = "personal";
+
+		page.post = ()=>
+		{
+			//sanitize (anti - xss)
+
+			let content = quill.container.innerHTML;
+
+			$http.post('/api/content/add',{token:token,value:content,location:page.course}).then((res)=>
+			{
+
+			});
+		}
+
+		page.timeline_page =0;
+		page.load_next = ()=>
+		{
+			
+		}
+
 	});
 
 	$scope.addPage("root", (page)=>{
@@ -288,7 +310,28 @@ app.controller("dashboardController",($scope,$http,$location) => {
 					page.onload();
 				}
 			});
-
+		}
+		page.modal.submit_delete = ()=>
+		{
+			page.modal.prompt = false;
+			let form = page.modal.form;
+		
+			$http.post('/api/user/delete',{token:token,id:page.modal.target._id }).then((res)=>{
+				$('#user-delete-modal').modal('toggle');
+				res = res.data;
+				if(res.err)
+				{
+					notify(res.err,"danger");
+					return console.log(res.err);
+				}
+				else
+				{
+					notify(`<b>Delete User</b>
+							<p>` + res.mes +`</p>
+						`,"success");
+					page.onload();
+				}
+			});
 		}
 
 		page.onload =()=>
@@ -323,6 +366,11 @@ app.controller("dashboardController",($scope,$http,$location) => {
 			page.modal.target = obj._id;
 			page.modal.form = obj;
 			$('#user-form-modal').modal('toggle');
+		}
+		page.modal.delete= (obj) =>
+		{
+			page.modal.target = obj;
+			$('#user-delete-modal').modal('toggle');
 		}
 
 		page.onload();

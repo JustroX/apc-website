@@ -76,7 +76,7 @@ app.post('/api/auth',(req,res)=>{
 		});
 });
 
-//users
+//User APIs
 app.post('/api/user',(req,res)=>{
 	validate("admin",req,res,(id)=>{
 		db.collection('user').find({},{ projection:
@@ -133,7 +133,6 @@ app.post('/api/user/edit',(req,res)=>{
 			form.password  = SHA256(form.password + settings.secret).toString();
 		}
 
-		console.log(req.body.id);
 		db.collection('user').updateOne({_id: ObjectId(req.body.id) },
 		{
 			$set : form,
@@ -141,11 +140,39 @@ app.post('/api/user/edit',(req,res)=>{
 		(err,result)=>{
 			if(err) throw err;
 			console.log(result.result.nModified+" files updated. ");
-			res.send({mes: "User information has succesfully updated."});
+			res.send({mes: "User information has been succesfully updated."});
+		});
+	});
+});
+app.post('/api/user/delete',(req,res)=>{
+	validate("admin",req,res,(id)=>{
+		let target = req.body.id;
+		if(target==id)
+		{
+			res.send({mes: "You can not delete yourself"});
+			return;
+		}
+		db.collection('user').deleteOne({_id:ObjectId(target)},(err,result)=>{
+			if(err) throw err;
+			res.send({mes: "User has been removed from the database."});
 		});
 	});
 });
 
+
+//Content APIs
+
+const TIMELINE_SIZE = 5;
+app.post('/api/content/',(req,res)=>{
+	validate("user",req,res,(id)=>{
+		//time
+		let page = req.body.page;
+		db.collection('content').find({ author: ObjectId(id) }).sort({ date : -1 }).skip(page*TIMELINE_SIZE).limit(TIMELINE_SIZE).toArray((err,result)=>{
+			if(err) throw err;
+			res.send(result);
+		});
+	});
+});
 
 
 //to fetch dependencies

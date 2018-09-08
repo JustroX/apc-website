@@ -90,7 +90,7 @@
 					</div>
 				</div>
 
-				<div class="card" ng-show='editor.active' style="box-shadow:0px 0px 10px 1px rgba(0,0,0,0.3)">
+				<div class="card" ng-hide='!editor.active' style="box-shadow:0px 0px 10px 1px rgba(0,0,0,0.3)">
 					<div class="card-body">
 						<small> <b>Home</b> > Post</small>
 						<br>
@@ -245,9 +245,6 @@
 							<p>Edit user information under administrative priveledges.</p>
 
 							<form class="form-inline">
-								<input type="text" class="form-control">
-								<button class="btn btn-fill" type="submit"><i class="fa fa-search"></i></button>
-								&nbsp&nbsp&nbsp
 								<button type="button"  class="btn btn-fill btn-success" data-toggle="modal" ng-click='pages.root.modal.add()'>Add new</button>
 							</form>
 							<hr>
@@ -273,7 +270,7 @@
 													<i style="color: green" class="fa fa-edit"></i> 
 												</a>
 												&nbsp&nbsp&nbsp
-												<a href="javascript:void(0)" style="cursor: pointer;">
+												<a href="javascript:void(0)" style="cursor: pointer;" ng-click='pages.root.modal.delete(i)'>
 													<i style="color: red" class="fa fa-trash"></i>
 												</a>
 											</td>
@@ -298,7 +295,7 @@
 
 	<form ng-submit="pages.root.modal.submit()" >
 		<div class="modal fade" id="user-form-modal" tabindex="-1" role="dialog" aria-labelledby="user-form-modal-Label" aria-hidden="true">
-		  <div style="padding-top: 0px; transform: translate(0%,0%);" class="modal-dialog modal-dialog-centered" role="document">
+		  <div  style="padding-top: 0px; transform: translate(0%,0%);" class="modal-dialog modal-dialog-centered" role="document">
 		    <div class="modal-content">
 		      <div class="modal-header">
 		        <h5 class="modal-title" id="user-form-modal-Label">
@@ -361,6 +358,25 @@
 		  </div>
 		</div>
 	</form>  
+
+	<div class="modal fade" id="user-delete-modal" tabindex="-1" role="dialog" aria-labelledby="user-delete-modal-Label" aria-hidden="true">
+	  <div class="modal-dialog modal-dialog-centered" role="document">
+	    <div class="modal-content">
+	      <div class="modal-header"></div>
+	      <div class="modal-body">
+	      	Are you sure you want to delete {{ pages.root.modal.target.name.first + ' ' + pages.root.modal.target.name.middle[0] + '. ' + pages.root.modal.target.name.last }} ?
+	      	<br><small style="color: red">
+	      		Note that this process is irreversible.
+	      	</small>
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+	        <div ng-if='pages.root.modal.prompt' class="alert alert-danger">Please provide correct information</div>
+	        <button type="button" class="btn btn-danger" ng-click='pages.root.modal.submit_delete()'>Confirm</button>
+	      </div>
+	    </div>
+	  </div>
+	</div>
 
 </div>
 
