@@ -82,7 +82,7 @@
 		<div class="col-md-3"></div>
 
 		<div class="col-md-6">
-			<div ng-if='is_here("home")'>
+			<div ng-show='is_here("home")'>
 				<div class="card" ng-if='!editor.active'>
 					<div class="card-body">
 						<small> <b>Home</b> > Post</small>
@@ -216,9 +216,16 @@
 					<div class="card-body" style="padding: 0">
 						<div class="container">
 							<br>
-							<b>Random Person</b> | <small>Basic Programming > Posts </small>
-							<hr>
-							<h4>References for?</h4>
+							<div class="container">
+								<b>{{ i.author[0].name.first + " " + i.author[0].name.middle + ". " + i.author[0].name.last }}</b> <small> {{ i.origin ? "|" + i.origin : "" }} | 2hrs 	</small>
+							</div>
+								<hr>
+
+							<div class="container">
+								{{ i.value }}
+							</div>
+
+							<!-- <h4>References for?</h4>
 							<p>
 								Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
 								tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
@@ -226,11 +233,14 @@
 								consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
 								cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
 								proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-							</p>
-							<button class="btn btn-sm btn-round btn-fill ">25 &nbsp <i class="fa fa-heart"></i></button> 
-							<button class="btn btn-sm btn-round btn-fill ">5 &nbsp <i class="fa fa-retweet"></i></button> 
-							<button class="btn btn-sm btn-round btn-fill ">30 &nbsp <i class="fa fa-comment"></i></button> 
+							</p> -->
 							<hr>
+							<div class="text-center">
+								<button class="btn btn-sm btn-round btn-fill "> {{ i.likes.length }} &nbsp <i class="fa fa-heart"></i></button> 
+								<button class="btn btn-sm btn-round btn-fill "> {{ i.shares.length }} &nbsp <i class="fa fa-retweet"></i></button> 
+								<button class="btn btn-sm btn-round btn-fill "> {{ i.replies.length }} &nbsp <i class="fa fa-comment"></i></button> 
+							</div>
+							<br>
 						</div>
 					</div>
 				</div>

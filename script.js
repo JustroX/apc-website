@@ -158,7 +158,7 @@ app.controller("dashboardController",($scope,$http,$location) => {
 	}
 
 	$scope.addPage("home", (page)=>{
-		// if(!quill)
+		if(!quill)
 		setTimeout(()=>{
 			quill = new Quill('#editor-container', {
 			  modules: {
@@ -191,7 +191,7 @@ app.controller("dashboardController",($scope,$http,$location) => {
 		page.timeline_page =0;
 		page.contents = [];
 		page.upper_id = null;
-		page.lower_id = "	";
+		page.lower_id = "";
 
 		page.scrollup = ()=>
 		{
@@ -408,7 +408,7 @@ app.controller("dashboardController",($scope,$http,$location) => {
 		page.onload();
 	});
 
-	$scope.goto("root");
+	$scope.goto("home");
 
 
 

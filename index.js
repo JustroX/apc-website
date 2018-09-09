@@ -197,7 +197,7 @@ app.post('/api/content/old',(req,res)=>{
 			{ 
 				$or:
 				[ 
-					 {author : { $in :  following } },
+					{ author : { $in :  following } },
 					{ group  : { $in : groups } }   
 				]
 			};
@@ -212,19 +212,62 @@ app.post('/api/content/old',(req,res)=>{
 						return;
 					}
 					let end_id = result[0]._id;
-					lower_id = lower_id || result[result.length-1];
-					// db.collection('content').find(
-					// {
-					// 	_id: 
-					// 	{
-					// 		$gte: ObjectId(lower_id),
-					// 		$lte: ObjectId(end_id),
-					// 	}
-					// }).toArray((err,result1)=>{
-					// 	if(err) throw err;
-					// 	res.send(result1);
-					// });
-					res.send(result);
+					lower_id = lower_id || result[result.length-1]._id;
+					db.collection('content')
+					.aggregate(
+					[
+						{
+							$match:
+							{
+								_id: 
+								{
+									$gte: lower_id,
+									$lte: end_id,
+								}
+							}
+							
+						},
+						{
+							$lookup:
+							{
+								from: 'user',
+								localField: 'author',
+								foreignField: '_id',
+								as: 'author'
+							}
+						}
+						,
+						{
+							$project:
+							{
+								_id:1,
+								author: 
+								{
+									_id: true,
+									name: true,
+								},
+								value: true,
+								date: true,
+								group: true,
+								likes: true,
+								shares: true,
+								replies: true,
+								origin: true,
+
+
+							}
+						}
+					])
+					.toArray((err,result1)=>{
+						if(err) throw err;
+						if(!result1[0]) 
+						{
+							res.send({err:"Yey! You reached the end." + JSON.stringify(result1)});
+							return;
+						}
+						res.send(result1);
+					});
+					// res.send(result);
 				}
 			);
 
