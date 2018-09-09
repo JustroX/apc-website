@@ -29,7 +29,7 @@ var cookie =
 var token;
 
 var app = angular.module("site",["ngRoute"]);
-var notify = ( mes , type = "default" )=>
+var notify = ( mes , type = "success" )=>
 {
 	$.notify({
 		message: mes
@@ -184,15 +184,47 @@ app.controller("dashboardController",($scope,$http,$location) => {
 
 			$http.post('/api/content/add',{token:token,value:content,location:page.course}).then((res)=>
 			{
-
+					;
 			});
 		}
 
 		page.timeline_page =0;
-		page.load_next = ()=>
+		page.contents = [];
+		page.upper_id = null;
+		page.lower_id = "	";
+
+		page.scrollup = ()=>
 		{
-			
+			$http.post('/api/content/new',{token:token,upper_id:page.upper_id}).then((res)=>{
+				res = res.data;
+				if(res.err) return console.log(res.err);
+				for(let i in res)
+					page.contents.unshift(res.pop());
+			});
 		}
+		page.scrolldown = ()=>
+		{
+			$http.post('/api/content/old',{token:token,lower_id:page.lower_id}).then((res)=>{
+				res = res.data;
+				if(res.err)
+				{
+					notify("<b>"+res.err+"</b>");
+					return console.log(res.err);
+				}
+				for(let i in res)
+					page.contents.push(res.shift());
+			});
+		}
+
+		page.scrolldown();
+
+		// page.load_next = ()=>
+		// {
+		// 	$http.post('/api/content',{token:token,page:page.timeline_page}).then((res)=>{
+		// 		if(res.err) return console.log(res.err);
+		// 		if()
+		// 	});
+		// }
 
 	});
 
@@ -374,7 +406,6 @@ app.controller("dashboardController",($scope,$http,$location) => {
 		}
 
 		page.onload();
-
 	});
 
 	$scope.goto("root");

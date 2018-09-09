@@ -173,7 +173,68 @@ app.post('/api/content/',(req,res)=>{
 		});
 	});
 });
+app.post('/api/content/old',(req,res)=>{
+	validate('user',req,res,(id)=>{
+		let lower_id = req.body.lower_id;
 
+		let following = [];
+		let groups = [];
+		//get following
+		db.collection('user').findOne({ _id : id },(err,result)=>{
+			if(!result)
+				return console.log(result);
+			for(let i in result.following)
+				following.push(ObjectId(result.following[i]));
+			
+			following.push(id);
+			
+			for(let i in result.groups)
+				groups.push(result.groups[i]);
+
+			// console.log(JSON.stringify(following));
+
+			let query_all_posts = 
+			{ 
+				$or:
+				[ 
+					 {author : { $in :  following } },
+					{ group  : { $in : groups } }   
+				]
+			};
+
+			db.collection('content').find(query_all_posts).sort({ date : 1 }).toArray(
+				(err,result)=>
+				{
+					if(err) throw err;
+					if(!result[0]) 
+					{
+						res.send({err:"Yey! You reached the end."});
+						return;
+					}
+					let end_id = result[0]._id;
+					lower_id = lower_id || result[result.length-1];
+					// db.collection('content').find(
+					// {
+					// 	_id: 
+					// 	{
+					// 		$gte: ObjectId(lower_id),
+					// 		$lte: ObjectId(end_id),
+					// 	}
+					// }).toArray((err,result1)=>{
+					// 	if(err) throw err;
+					// 	res.send(result1);
+					// });
+					res.send(result);
+				}
+			);
+
+		
+
+		});
+		
+
+	});
+});
 
 //to fetch dependencies
 app.get('/res/*',function(req,res){
