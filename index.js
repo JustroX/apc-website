@@ -211,21 +211,21 @@ app.post('/api/content/old',(req,res)=>{
 						res.send({err:"Yey! You reached the end."});
 						return;
 					}
-					let end_id = result[0]._id;
-					lower_id = lower_id || result[result.length-1]._id;
+					let lower = result.indexOf(lower_id) || 0;
+					let end = Math.min( 5 , result.length-lower );
+					// console.log(lower_id+" "+end_id);
 					db.collection('content')
 					.aggregate(
 					[
 						{
 							$match:
 							{
-								_id: 
-								{
-									$gte: lower_id,
-									$lte: end_id,
-								}
+								$or:
+								[ 
+									{ author : { $in :  following } },
+									{ group  : { $in : groups } }   
+								]
 							}
-							
 						},
 						{
 							$lookup:
@@ -235,8 +235,16 @@ app.post('/api/content/old',(req,res)=>{
 								foreignField: '_id',
 								as: 'author'
 							}
-						}
-						,
+						},
+						{
+							$sort:
+							{
+								date : -1
+							}
+						},
+						{
+							$range: [ lower , lower + end ,  1]
+						},
 						{
 							$project:
 							{
@@ -276,6 +284,25 @@ app.post('/api/content/old',(req,res)=>{
 		});
 		
 
+	});
+});
+app.post('/api/content/add',(req,res)=>{
+	validate("user",req,res,(id)=>{
+		let value = req.body.value;
+		db.collection('content').insertOne(
+			{
+				author: ObjectId(id),
+				value : value,
+				date : new Date(),
+				origin : req.body.location || "",
+				shares: [],
+				likes: [],
+				replies: []
+			},
+		(err,result)=>{
+			if(err) throw err;
+			res.send({mes:"Your post has been published"});
+		});	
 	});
 });
 

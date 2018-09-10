@@ -174,18 +174,33 @@ app.controller("dashboardController",($scope,$http,$location) => {
 			});
 		},1);
 
-		page.course = "personal";
+		page.course = "";
+		page.posting = false;
 
 		page.post = ()=>
 		{
 			//sanitize (anti - xss)
+			if(page.posting)
+				return;
+			page.posting = true;
+			let content = quill.root.innerHTML;
 
-			let content = quill.container.innerHTML;
-
-			$http.post('/api/content/add',{token:token,value:content,location:page.course}).then((res)=>
-			{
-					;
-			});
+			$http.post('/api/content/add',{token:token,value:content,location:page.course}).
+			then(
+				(res)=>
+				{
+					page.posting = false;
+					quill.setContents([]);
+					res = res.data;
+					if(res.err) return console.log(res.err);
+					notify("<b>"+res.mes+"</b>","success");
+				},
+				(res)=>
+				{
+					page.posting = false;
+					notify("<b>An error has occured when trying to publish your post.</b>","danger");
+				},
+			);
 		}
 
 		page.timeline_page =0;
