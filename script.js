@@ -28,7 +28,7 @@ var cookie =
 
 var token;
 
-var app = angular.module("site",["ngRoute"]);
+var app = angular.module("site",["ngRoute",'ngSanitize']);
 var notify = ( mes , type = "success" )=>
 {
 	$.notify({
@@ -194,6 +194,7 @@ app.controller("dashboardController",($scope,$http,$location) => {
 					res = res.data;
 					if(res.err) return console.log(res.err);
 					notify("<b>"+res.mes+"</b>","success");
+					page.scrollup();
 				},
 				(res)=>
 				{
@@ -226,8 +227,14 @@ app.controller("dashboardController",($scope,$http,$location) => {
 					notify("<b>"+res.err+"</b>");
 					return console.log(res.err);
 				}
-				for(let i in res)
-					page.contents.push(res.shift());
+				console.log(res.length);
+				console.log(JSON.stringify(res));
+				for(let i=0; i<res.length ; i++)
+				{
+					let a = res[i];
+					console.log(a);
+					page.contents.push(a);
+				}
 			});
 		}
 

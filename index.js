@@ -202,19 +202,7 @@ app.post('/api/content/old',(req,res)=>{
 				]
 			};
 
-			db.collection('content').find(query_all_posts).sort({ date : 1 }).toArray(
-				(err,result)=>
-				{
-					if(err) throw err;
-					if(!result[0]) 
-					{
-						res.send({err:"Yey! You reached the end."});
-						return;
-					}
-					let lower = result.indexOf(lower_id) || 0;
-					let end = Math.min( 5 , result.length-lower );
-					// console.log(lower_id+" "+end_id);
-					db.collection('content')
+			db.collection('content')
 					.aggregate(
 					[
 						{
@@ -243,9 +231,6 @@ app.post('/api/content/old',(req,res)=>{
 							}
 						},
 						{
-							$range: [ lower , lower + end ,  1]
-						},
-						{
 							$project:
 							{
 								_id:1,
@@ -265,16 +250,24 @@ app.post('/api/content/old',(req,res)=>{
 
 							}
 						}
-					])
-					.toArray((err,result1)=>{
-						if(err) throw err;
-						if(!result1[0]) 
-						{
-							res.send({err:"Yey! You reached the end." + JSON.stringify(result1)});
-							return;
-						}
-						res.send(result1);
-					});
+					]).toArray(
+				(err,result)=>
+				{
+					if(err) throw err;
+					if(!result[0]) 
+					{
+						res.send({err:"Yey! You reached the end."});
+						return;
+					}
+					let a = result.indexOf(lower_id);
+					let lower = a >= 0 ? a :  0;
+					let end = Math.min( 5 , result.length-lower );
+
+
+
+					let r = result.splice(lower,lower+end);
+					console.log(JSON.stringify(r.length));
+					res.send(( (r[0]) ?  r : {err: "Yey! You reached the end."}) );
 					// res.send(result);
 				}
 			);
