@@ -211,15 +211,20 @@ app.controller("dashboardController",($scope,$http,$location) => {
 
 		page.scrollup = ()=>
 		{
+			page.upper_id = page.contents[0];
+			if(page.upper_id) page.upper_id = page.upper_id._id;
 			$http.post('/api/content/new',{token:token,upper_id:page.upper_id}).then((res)=>{
 				res = res.data;
 				if(res.err) return console.log(res.err);
+				console.log(res);
 				for(let i in res)
 					page.contents.unshift(res.pop());
 			});
 		}
 		page.scrolldown = ()=>
 		{
+			page.lower_id = page.contents[page.contents.length-1];
+			if(page.lower_id) page.lower_id = page.lower_id._id;
 			$http.post('/api/content/old',{token:token,lower_id:page.lower_id}).then((res)=>{
 				res = res.data;
 				if(res.err)

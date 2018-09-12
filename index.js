@@ -173,6 +173,108 @@ app.post('/api/content/',(req,res)=>{
 		});
 	});
 });
+app.post('/api/content/new',(req,res)=>{
+	validate('user',req,res,(id)=>{
+		let upper_id = req.body.upper_id;
+
+		let following = [];
+		let groups = [];
+		//get following
+		db.collection('user').findOne({ _id : id },(err,result)=>{
+			if(!result)
+				return console.log(result);
+			for(let i in result.following)
+				following.push(ObjectId(result.following[i]));
+			
+			following.push(id);
+			
+			for(let i in result.groups)
+				groups.push(result.groups[i]);
+
+			// console.log(JSON.stringify(following));
+
+			let query_all_posts = 
+			{ 
+				$or:
+				[ 
+					{ author : { $in :  following } },
+					{ group  : { $in : groups } }   
+				]
+			};
+
+			db.collection('content')
+					.aggregate(
+					[
+						{
+							$match:
+							{
+								$or:
+								[ 
+									{ author : { $in :  following } },
+									{ group  : { $in : groups } }   
+								]
+							}
+						},
+						{
+							$lookup:
+							{
+								from: 'user',
+								localField: 'author',
+								foreignField: '_id',
+								as: 'author'
+							}
+						},
+						{
+							$sort:
+							{
+								date : -1
+							}
+						},
+						{
+							$project:
+							{
+								_id:1,
+								author: 
+								{
+									_id: true,
+									name: true,
+								},
+								value: true,
+								date: true,
+								group: true,
+								likes: true,
+								shares: true,
+								replies: true,
+								origin: true,
+
+
+							}
+						}
+					]).toArray(
+				(err,result)=>
+				{
+					if(err) throw err;
+					if(!result[0]) 
+					{
+						res.send({err:"Yey! You reached the end."});
+						return;
+					}
+					let a = result.indexOf(upper_id);
+					console.log("index at "+ a );
+					let upper = a >= 0 ? a :  result.length-1;
+
+					let r = result.splice(0,upper);
+					console.log(JSON.stringify(r.length));
+					res.send(( (r[0]) ?  r : {err: "Yey! You reached the end."}) );
+					// res.send(result);
+				}
+			);
+
+		
+
+		});
+	});
+});
 app.post('/api/content/old',(req,res)=>{
 	validate('user',req,res,(id)=>{
 		let lower_id = req.body.lower_id;
