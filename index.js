@@ -259,7 +259,7 @@ app.post('/api/content/new',(req,res)=>{
 						res.send({err:"Yey! You reached the end."});
 						return;
 					}
-					let a = result.indexOf(upper_id);
+					let a = result.reduce((a,b,c)=> b._id==upper_id ? c : a );
 					console.log("index at "+ a );
 					let upper = a >= 0 ? a :  result.length-1;
 
@@ -361,7 +361,7 @@ app.post('/api/content/old',(req,res)=>{
 						res.send({err:"Yey! You reached the end."});
 						return;
 					}
-					let a = result.indexOf(lower_id);
+					let a = result.reduce( ( cur, a , i ) => a._id==lower_id ? i : cur , -1 );
 					let lower = a >= 0 ? a :  0;
 					let end = Math.min( 5 , result.length-lower );
 
