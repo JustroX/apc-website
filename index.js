@@ -369,7 +369,9 @@ app.post('/api/content/old',(req,res)=>{
 
 					let r = result.splice(lower,lower+end);
 					console.log(JSON.stringify(r.length));
-					res.send(( (r[0]) ?  r : {err: "Yey! You reached the end."}) );
+					if(r[0])
+						r.splice(0,1);
+					res.send(( r[0] ?  r : {err: "Yey! You reached the end."}) );
 					// res.send(result);
 				}
 			);
