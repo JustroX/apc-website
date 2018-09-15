@@ -403,6 +403,19 @@ app.post('/api/content/add',(req,res)=>{
 	});
 });
 
+app.post('/api/content/profile',(req,res)=>{
+	validate("user",req,res,(id)=>{
+		let needle = req.body.needle || 0;
+		db.collection('content').find({author: ObjectId(id)}).sort({date: -1}).toArray((err,result)=>{
+			if(err) throw err;
+			let idx = result.reduce((x,v,i)=> v._id == needle ? i : x  , -1);
+			idx  = idx > 0 ? idx : 0;
+			let len  = Math.min( 5  ,result.length-idx )
+			res.send(result.splice(idx,len));
+		});
+	});
+});
+
 //to fetch dependencies
 app.get('/res/*',function(req,res){
 	// console.log(req.originalUrl);

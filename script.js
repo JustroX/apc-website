@@ -435,6 +435,24 @@ app.controller("dashboardController",($scope,$http,$location) => {
 		page.onload();
 	});
 
+	$scope.addPage("profile", (page)=>{
+		
+		page.contents = [];
+		page.needle = null;
+		page.load_posts = ()=>
+		{
+			$http.post('/api/content/profile',{token:token, needle: page.needle }).then((res)=>{
+				res = res.data;
+				if(res.err)
+					return console.log(res.err);
+				page.contents = res;
+				page.needle = page.contents[page.contents.length-1]._id;
+			});
+		}
+
+		page.load_posts();
+	});
+
 	$scope.goto("home");
 
 
