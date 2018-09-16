@@ -405,13 +405,28 @@ app.post('/api/content/add',(req,res)=>{
 
 app.post('/api/content/profile',(req,res)=>{
 	validate("user",req,res,(id)=>{
+
 		let needle = req.body.needle || 0;
-		db.collection('content').find({author: ObjectId(id)}).sort({date: -1}).toArray((err,result)=>{
+
+		db.collection('content').aggregate(
+			[
+				{ $match : { author: ObjectId(id) } },
+				{ $sort : {date: -1} },
+				{ $lookup:
+					{
+						from: 'user',
+						localField: 'author',
+						foreignField: '_id',
+						as: 'author'
+					}
+				}
+			]).toArray((err,result)=>{
 			if(err) throw err;
 			let idx = result.reduce((x,v,i)=> v._id == needle ? i : x  , -1);
-			idx  = idx > 0 ? idx : 0;
+			// idx  = idx > 0 ? idx : -1;
 			let len  = Math.min( 5  ,result.length-idx )
-			res.send(result.splice(idx,len));
+			let r = result.splice(idx+1,len);
+			res.send( (r[0])? r : {err:"You reached the end."} );
 		});
 	});
 });
