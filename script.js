@@ -462,6 +462,17 @@ app.controller("dashboardController",($scope,$http,$location) => {
 		page.load_posts();
 	});
 
+	$scope.addPage("search",(page)=>{
+		page = { query: "" , results : [] };
+		page.submit = ()=>
+		{
+			$http.post({token:token, query: page.query}).then((res)=>{
+				res = res.data;
+				page.results =res;
+			});
+		}
+	});
+
 	$scope.goto("home");
 
 

@@ -431,6 +431,18 @@ app.post('/api/content/profile',(req,res)=>{
 	});
 });
 
+app.post('/api/search',(req,res)=>{
+	validate("user",req,res,(id)=>{
+		let query = req.body.query;
+		let regx  = new RegExp(query,"g");
+		db.collection('user').find({ $or : [ { "name.first" : regx } , { "name.middle" : regx } ,  { "name.last" : regx } ]  }).toArray(
+		(err,result)=>{
+			if(err) throw err;
+			res.send(result);
+		});
+	});
+});
+
 //to fetch dependencies
 app.get('/res/*',function(req,res){
 	// console.log(req.originalUrl);

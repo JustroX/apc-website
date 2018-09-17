@@ -37,7 +37,12 @@
                     &nbsp&nbsp&nbsp&nbsp
                 </li>
                 <li class="nav-item">
-                    <input type="" name="" class="form-control" placeholder="Search...">
+                    <div class="dropdown">
+                        <input type="text" ng-change='pages.search.submit()' ng-model='pages.search.query' class="form-control" placeholder="Search...">
+                        <ul class="dropdown-menu">
+                           <li><a href="#">HTML</a></li>
+                        </ul>
+                    </div>
                 </li>
                 <li class="nav-item">
                     <button class="btn btn-round btn-default">Go</button>
