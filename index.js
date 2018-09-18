@@ -435,9 +435,10 @@ app.post('/api/search',(req,res)=>{
 	validate("user",req,res,(id)=>{
 		let query = req.body.query;
 		let regx  = new RegExp(query,"g");
-		db.collection('user').find({ $or : [ { "name.first" : regx } , { "name.middle" : regx } ,  { "name.last" : regx } ]  }).toArray(
+		db.collection('user').find({ $or : [ { "name.first" : regx } , { "name.middle" : regx } ,  { "name.last" : regx } ]  },{projection:{ name: 1  } }).toArray(
 		(err,result)=>{
 			if(err) throw err;
+			console.log(result);
 			res.send(result);
 		});
 	});

@@ -463,18 +463,21 @@ app.controller("dashboardController",($scope,$http,$location) => {
 	});
 
 	$scope.addPage("search",(page)=>{
-		page = { query: "" , results : [] };
+		page.query = "";
+		page.results = [];
 		page.submit = ()=>
 		{
-			$http.post({token:token, query: page.query}).then((res)=>{
+			$http.post("/api/search",{token:token, query: page.query}).then((res)=>{
 				res = res.data;
 				page.results =res;
 			});
 		}
 	});
 
-	$scope.goto("home");
+	$scope.pages.search.run();
 
+	$scope.goto("home");
+	// alert("ere");
 
 
 
