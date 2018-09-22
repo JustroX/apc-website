@@ -439,13 +439,14 @@ app.controller("dashboardController",($scope,$http,$location) => {
 		
 		page.contents = [];
 		page.needle = null;
+		page.target = null;
 		page.load_posts = ()=>
 		{
 			// if(page.needle == null)
 				// page.needle = 0;
 			// else
 				// page.needle +=1;
-			$http.post('/api/content/profile',{token:token, needle: page.needle }).then((res)=>{
+			$http.post('/api/content/profile',{token:token, needle: page.needle, target:page.target }).then((res)=>{
 				res = res.data;
 				// console.log(res);
 				if(res.err)
@@ -462,6 +463,33 @@ app.controller("dashboardController",($scope,$http,$location) => {
 		page.load_posts();
 	});
 
+	$scope.addPage("profile_visit", (page)=>{
+		page.contents = [];
+		page.needle = null;
+		page.load_info = ( id )=>
+		{
+			$http.post('/api/user',{token:token}).then((res)=>{
+				//
+			});
+		}
+		page.load_posts = ( id )=>
+		{
+			$http.post('/api/content/profile',{token:token, needle: page.needle, target:id }).then((res)=>{
+				res = res.data;
+				if(res.err)
+				{
+					notify(res.err,"danger");
+					return console.log(res.err);
+				}
+				for(let i of res)
+					page.contents.push(i);
+				page.needle = page.contents[page.contents.length-1]._id;
+
+				page.load_info(id);
+			});
+		}
+	});
+
 	$scope.addPage("search",(page)=>{
 		page.query = "";
 		page.results = [];
@@ -471,6 +499,10 @@ app.controller("dashboardController",($scope,$http,$location) => {
 				res = res.data;
 				page.results =res;
 			});
+		}
+		page.visit = (i)=>
+		{
+
 		}
 	});
 

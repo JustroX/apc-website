@@ -407,10 +407,11 @@ app.post('/api/content/profile',(req,res)=>{
 	validate("user",req,res,(id)=>{
 
 		let needle = req.body.needle || 0;
+		let target = req.body.target || id;
 
 		db.collection('content').aggregate(
 			[
-				{ $match : { author: ObjectId(id) } },
+				{ $match : { author: ObjectId(target) } },
 				{ $sort : {date: -1} },
 				{ $lookup:
 					{
@@ -434,12 +435,12 @@ app.post('/api/content/profile',(req,res)=>{
 app.post('/api/search',(req,res)=>{
 	validate("user",req,res,(id)=>{
 		let query = req.body.query;
-		let regx  = new RegExp(query,"g");
+		let regx  = new RegExp(query,"i");
 		db.collection('user').find({ $or : [ { "name.first" : regx } , { "name.middle" : regx } ,  { "name.last" : regx } ]  },{projection:{ name: 1  } }).toArray(
 		(err,result)=>{
 			if(err) throw err;
 			console.log(result);
-			res.send(result);
+			res.send(result.splice(0,5));
 		});
 	});
 });

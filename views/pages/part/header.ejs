@@ -85,6 +85,6 @@
 
 <div ng-if='pages.search.query' id='search-results' style="position: fixed; z-index: 2;top: 80px;left: 640px;">
    <div class="list-group">
-      <a ng-repeat=' i in  pages.search.results' href="javascript:void(0)" class="list-group-item list-group-item-action">{{i}}</a>
+      <a ng-repeat=' i in  pages.search.results' href="javascript:void(0)" ng-click='pages.search.visit(i)' class="list-group-item list-group-item-action">{{i.name.first + " "+i.name.middle+" "+i.name.last }}</a>
     </div>
 </div>
