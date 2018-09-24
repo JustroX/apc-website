@@ -388,7 +388,7 @@
 						<div class="container text-center">
 							<br>
 							<img class="img-circle" width="100px" src="https://d2x5ku95bkycr3.cloudfront.net/App_Themes/Common/images/profile/0_200.png" alt="Text">
-							<h3>{{ user.name.first + " " + user.name.middle[0] + ". " + user.name.last }}</h3>
+							<h3>{{ pages.profile_visit.user.name.first + " " + pages.profile_visit.user.name.middle[0] + ". " + pages.profile_visit.user.name.last }}</h3>
 							<p>
 								Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
 								tempor incididunt ut labore et dolore magna aliqua.
@@ -410,6 +410,8 @@
 									</div>
 								</div>
 							</div>
+							<br>
+							<button class="btn btn-round"> Follow </button>
 							<br><br><br>
 						</div>
 					</div>
@@ -418,7 +420,7 @@
 					Your Posts
 				</p>
 				
-				<div class="card" ng-repeat=' i in pages.profile.contents'>
+				<div class="card" ng-repeat=' i in pages.profile_visit.contents'>
 					<div class="card-body" style="padding: 0">
 						<div class="container">
 							<br>
@@ -452,7 +454,7 @@
 				</div>
 
 
-				<div class="card" style="cursor: pointer;" ng-click='pages.profile.load_posts()'>
+				<div class="card" style="cursor: pointer;" ng-click='pages.profile_visit.load_posts(pages.profile_visit.user._id)'>
 					<div class="card-body text-center">
 						Load more
 					</div>

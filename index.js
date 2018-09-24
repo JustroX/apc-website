@@ -79,18 +79,28 @@ app.post('/api/auth',(req,res)=>{
 //User APIs
 app.post('/api/user',(req,res)=>{
 	validate("admin",req,res,(id)=>{
-		db.collection('user').find({},{ projection:
-			{
-				_id:1, 
-				username: 1,
-				email: 1,
-				priv : 1,
-				name: 1, 
-				secondary: 1
-			} }
+
+		let query = {};
+		if(req.body.user) query = {
+				_id : ObjectId(req.body.user)
+			}
+
+		db.collection('user').find(
+			query,
+			{ 
+				projection:
+				{
+					_id:1, 
+					username: 1,
+					email: 1,
+					priv : 1,
+					name: 1, 
+					secondary: 1
+				}
+			}
 			).toArray((err, result)=>{
 			if(err) throw err;
-			res.send(result );
+			res.send(result);
 		});
 	});
 });

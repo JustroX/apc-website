@@ -466,10 +466,14 @@ app.controller("dashboardController",($scope,$http,$location) => {
 	$scope.addPage("profile_visit", (page)=>{
 		page.contents = [];
 		page.needle = null;
+
+		page.user = {};
 		page.load_info = ( id )=>
 		{
-			$http.post('/api/user',{token:token}).then((res)=>{
-				//
+			$http.post('/api/user',{token:token , user: id}).then((res)=>{
+				res = res.data;
+				page.user = res[0];
+				page.load_posts(id);
 			});
 		}
 		page.load_posts = ( id )=>
@@ -485,9 +489,8 @@ app.controller("dashboardController",($scope,$http,$location) => {
 					page.contents.push(i);
 				page.needle = page.contents[page.contents.length-1]._id;
 
-				page.load_info(id);
 			});
-		}
+		};
 	});
 
 	$scope.addPage("search",(page)=>{
@@ -502,7 +505,9 @@ app.controller("dashboardController",($scope,$http,$location) => {
 		}
 		page.visit = (i)=>
 		{
-
+			$scope.goto("profile_visit");
+			$scope.pages.profile_visit.load_info(i._id);
+			page.query = "";
 		}
 	});
 

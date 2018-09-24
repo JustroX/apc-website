@@ -42,7 +42,7 @@
                         <input type="text" ng-change='pages.search.query && pages.search.submit()' ng-model='pages.search.query' class="form-control" placeholder="Search...">
                 </li>
                 <li class="nav-item">
-                    <button class="btn btn-round btn-default">Go</button>
+                    <button ng-click='pages.search.submit()' class="btn btn-round btn-default">Go</button>
                 </li>
             </ul>
             <ul class="navbar-nav ml-auto">
