@@ -95,7 +95,9 @@ app.post('/api/user',(req,res)=>{
 					email: 1,
 					priv : 1,
 					name: 1, 
-					secondary: 1
+					secondary: 1,
+					followers: 1,
+					following: 1,
 				}
 			}
 			).toArray((err, result)=>{
@@ -454,6 +456,22 @@ app.post('/api/search',(req,res)=>{
 		});
 	});
 });
+
+//follow
+app.post('/api/follow/add',(req,res)=>{
+	validate("user",req,res,(id)=>{
+		let user_id = req.body.target;
+		db.collection('user').updateOne({ _id: ObjectId(id) },{ $push: { following: user_id } },(err,result)=>
+		{
+			if(err) throw err;
+			db.collection('user').updateOne({_id: ObjectId(user_id)},{ $push: {followers: id } },(err,result)=>{
+				if(err) throw err;
+				res.send({mes:"You followed "});
+			});
+		});
+	});
+})
+
 
 //to fetch dependencies
 app.get('/res/*',function(req,res){

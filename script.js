@@ -468,11 +468,13 @@ app.controller("dashboardController",($scope,$http,$location) => {
 		page.needle = null;
 
 		page.user = {};
+		page.followed = false;
 		page.load_info = ( id )=>
 		{
 			$http.post('/api/user',{token:token , user: id}).then((res)=>{
 				res = res.data;
 				page.user = res[0];
+				page.followed = page.user.followers.includes($scope.user._id);
 				page.load_posts(id);
 			});
 		}
@@ -491,6 +493,26 @@ app.controller("dashboardController",($scope,$http,$location) => {
 
 			});
 		};
+		page.follow_button_press = ()=>
+		{
+			if(page.followed)
+				page.unfollow();
+			else
+				page.follow();
+		}
+		page.follow = ()=>
+		{
+			$http.post('/api/follow/add',{token:token,target: page.user._id}).then((res)=>{
+				res = res.data;
+				if(res.err)
+					return notify(res.err,"danger");
+				else
+				{
+					notify(res.mes+" "+page.user.name.first+"!","success");
+					page.followed = true;
+				}
+			});
+		}
 	});
 
 	$scope.addPage("search",(page)=>{
