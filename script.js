@@ -216,9 +216,9 @@ app.controller("dashboardController",($scope,$http,$location) => {
 			$http.post('/api/content/new',{token:token,upper_id:page.upper_id}).then((res)=>{
 				res = res.data;
 				if(res.err) return console.log(res.err);
-				// console.log(res);
-				for(let i in res)
+				while(res.length !=0)
 					page.contents.unshift(res.pop());
+				console.log(res);
 			});
 		}
 		page.scrolldown = ()=>
@@ -473,6 +473,7 @@ app.controller("dashboardController",($scope,$http,$location) => {
 		{
 			$http.post('/api/user',{token:token , user: id}).then((res)=>{
 				res = res.data;
+				console.log(res);
 				page.user = res[0];
 				page.followed = page.user.followers.includes($scope.user._id);
 				page.load_posts(id);
@@ -510,6 +511,18 @@ app.controller("dashboardController",($scope,$http,$location) => {
 				{
 					notify(res.mes+" "+page.user.name.first+"!","success");
 					page.followed = true;
+				}
+			});
+		}
+		page.unfollow = ()=>
+		{
+			$http.post('/api/follow/remove',{token:token, target: page.user._id}).then((res)=>{
+				res = res.data;
+				if(res.err)
+					return notify(res.err, "danger");
+				else
+				{
+					page.followed = false;
 				}
 			});
 		}

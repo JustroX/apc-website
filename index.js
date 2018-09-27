@@ -66,7 +66,7 @@ app.post('/api/auth',(req,res)=>{
 			if(result)
 			{
 				delete result.password;
-				console.log(result);
+				// console.log(result);
 				//generate token
 				var  token = jwt.new( result );
 				res.send({ token : token });
@@ -78,13 +78,9 @@ app.post('/api/auth',(req,res)=>{
 
 //User APIs
 app.post('/api/user',(req,res)=>{
-	validate("admin",req,res,(id)=>{
-
-		let query = {};
-		if(req.body.user) query = {
-				_id : ObjectId(req.body.user)
-			}
-
+	let query = {};
+	let ex = (id)=>
+	{
 		db.collection('user').find(
 			query,
 			{ 
@@ -104,7 +100,18 @@ app.post('/api/user',(req,res)=>{
 			if(err) throw err;
 			res.send(result);
 		});
-	});
+	}
+	if(req.body.user) 
+	{
+		query = 
+		{
+			_id : ObjectId(req.body.user)
+		}
+		validate("user",req,res,ex);
+	}
+	else
+		validate("admin",req,res,ex);
+
 });
 app.post('/api/user/exists/username',(req,res)=>{
 	validate("admin",req,res,(id)=>{
@@ -151,7 +158,7 @@ app.post('/api/user/edit',(req,res)=>{
 		},
 		(err,result)=>{
 			if(err) throw err;
-			console.log(result.result.nModified+" files updated. ");
+			// console.log(result.result.nModified+" files updated. ");
 			res.send({mes: "User information has been succesfully updated."});
 		});
 	});
@@ -193,8 +200,8 @@ app.post('/api/content/new',(req,res)=>{
 		let groups = [];
 		//get following
 		db.collection('user').findOne({ _id : id },(err,result)=>{
-			if(!result)
-				return console.log(result);
+			// if(!result)
+			// 	return console.log(result);
 			for(let i in result.following)
 				following.push(ObjectId(result.following[i]));
 			
@@ -272,11 +279,11 @@ app.post('/api/content/new',(req,res)=>{
 						return;
 					}
 					let a = result.reduce((a,b,c)=> b._id==upper_id ? c : a );
-					console.log("index at "+ a );
+					// console.log("index at "+ a );
 					let upper = a >= 0 ? a :  result.length-1;
 
 					let r = result.splice(0,upper);
-					console.log(JSON.stringify(r.length));
+					// console.log(JSON.stringify(r.length));
 					res.send(( (r[0]) ?  r : {err: "Yey! You reached the end."}) );
 					// res.send(result);
 				}
@@ -295,10 +302,11 @@ app.post('/api/content/old',(req,res)=>{
 		let groups = [];
 		//get following
 		db.collection('user').findOne({ _id : id },(err,result)=>{
-			if(!result)
-				return console.log(result);
+			// if(!result)
+			// 	return console.log(result);
 			for(let i in result.following)
 				following.push(ObjectId(result.following[i]));
+			console.log(following)
 			
 			following.push(id);
 			
@@ -380,7 +388,7 @@ app.post('/api/content/old',(req,res)=>{
 
 
 					let r = result.splice(lower,lower+end);
-					console.log(JSON.stringify(r.length));
+					// console.log(JSON.stringify(r.length));
 					if(r[0])
 						r.splice(0,1);
 					res.send(( r[0] ?  r : {err: "Yey! You reached the end."}) );
@@ -451,7 +459,7 @@ app.post('/api/search',(req,res)=>{
 		db.collection('user').find({ $or : [ { "name.first" : regx } , { "name.middle" : regx } ,  { "name.last" : regx } ]  },{projection:{ name: 1  } }).toArray(
 		(err,result)=>{
 			if(err) throw err;
-			console.log(result);
+			// console.log(result);
 			res.send(result.splice(0,5));
 		});
 	});
@@ -470,7 +478,21 @@ app.post('/api/follow/add',(req,res)=>{
 			});
 		});
 	});
-})
+});
+
+app.post('/api/follow/remove',(req,res)=>{
+	validate("user",req,res,(id)=>{
+		let user_id = req.body.target;
+		db.collection('user').updateOne({ _id: ObjectId(id) },{ $pull: { following: user_id } },(err,result)=>
+		{
+			if(err) throw err;
+			db.collection('user').updateOne({_id: ObjectId(user_id)},{ $pull: {followers: id } },(err,result)=>{
+				if(err) throw err;
+				res.send({mes:"Unfollow succesful"});
+			});
+		});
+	});
+});
 
 
 //to fetch dependencies
