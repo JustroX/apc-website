@@ -548,6 +548,33 @@ app.controller("dashboardController",($scope,$http,$location) => {
 
 	$scope.pages.search.run();
 
+	$scope.content = {};
+	$scope.content.press_like = (i)=>
+	{
+		if(i.likes.includes($scope.user._id))
+			$scope.content.unlike(i);
+		else
+			$scope.content.like(i);
+	}
+	$scope.content.like = (i) =>
+	{
+		$http.post("/api/like/add",{token:token, post: i._id}).then((res)=>{
+			res = res.data;
+			if(res.err)
+				return notify(res.err, "danger");
+			i.likes.push($scope.user._id);
+		});
+	}
+	$scope.content.unlike = (i) =>
+	{
+		$http.post("/api/like/remove",{token:token, post: i._id}).then((res)=>{
+			res = res.data;
+			if(res.err)
+				return notify(res.err, "danger");
+			i.likes.splice( i.likes.indexOf($scope.user._id) ,1);
+		});
+	}
+
 	$scope.goto("home");
 	// alert("ere");
 
