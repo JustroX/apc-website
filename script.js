@@ -575,6 +575,33 @@ app.controller("dashboardController",($scope,$http,$location) => {
 		});
 	}
 
+	$scope.content.press_share = (i) =>
+	{
+		if(i.shares.includes($scope.user._id))
+			$scope.content.unshare(i);
+		else
+			$scope.content.share(i);
+	}
+
+	$scope.content.share = (i)=>
+	{
+		$http.post("/api/share/add",{token: token, post: i._id}).then((res)=>{
+			res = res.data;
+			if(res.err)
+				return notify(res.err, "danger");
+			i.shares.push( $scope.user._id );
+		});
+	}
+	$scope.content.unshare = (i)=>
+	{
+		$http.post("/api/share/remove",{token: token, post: i._id}).then((res)=>{
+			res = res.data;
+			if(res.err)
+				return notify(res.err, "danger");
+			i.shares.splice( i.shares.indexOf($scope.user._id) , 1 );
+		});		
+	}
+
 	$scope.goto("home");
 	// alert("ere");
 

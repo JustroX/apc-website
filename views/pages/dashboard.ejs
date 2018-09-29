@@ -237,7 +237,7 @@
 							<hr>
 							<div class="text-center">
 								<button ng-click='content.press_like(i)' class="btn btn-sm btn-round btn-fill " ng-class='{ "btn-danger": i.likes.includes(user._id) }'> {{ i.likes.length }} &nbsp <i class="fa fa-heart"></i></button> 
-								<button class="btn btn-sm btn-round btn-fill "> {{ i.shares.length }} &nbsp <i class="fa fa-retweet"></i></button> 
+								<button ng-click='content.press_share(i)' class="btn btn-sm btn-round btn-fill " ng-class=' { "btn-success" : i.shares.includes(user._id) } '> {{ i.shares.length }} &nbsp <i class="fa fa-retweet"></i></button> 
 								<button class="btn btn-sm btn-round btn-fill "> {{ i.replies.length }} &nbsp <i class="fa fa-comment"></i></button> 
 							</div>
 							<br>

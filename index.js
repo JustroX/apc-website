@@ -518,6 +518,28 @@ app.post('/api/like/remove',(req,res)=>{
 	});
 })
 
+//rt
+app.post('/api/share/add',(req,res)=>{
+	validate("user",req,res,(id)=>{
+		let post_id = req.body.post;
+		db.collection('content').updateOne({ _id: ObjectId(post_id)},{ $push : { shares : id } } , (err, result)=>{
+			if(err) throw err;
+			db.collection('content')
+			res.send( { mes : "Post Shared"  } );
+		});
+	});
+});
+app.post('/api/share/remove',(req,res)=>{
+	validate("user",req,res,(id)=>{
+		let post_id = req.body.post;
+		db.collection('content').updateOne({ _id: ObjectId(post_id)},{ $pull : { shares : id } } , (err, result)=>{
+			if(err) throw err;
+			db.collection('content')
+			res.send( { mes : "Post Unshared"  } );
+		});
+	});
+});
+
 
 //to fetch dependencies
 app.get('/res/*',function(req,res){
