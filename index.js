@@ -319,8 +319,9 @@ app.post('/api/content/old',(req,res)=>{
 			{ 
 				$or:
 				[ 
-					{ author : { $in :  following } },
-					{ group  : { $in : groups } }   
+					// { author : { $in :  following } },
+					{ shares : { $in : following } },
+					// { group  : { $in : groups } }   
 				]
 			};
 
@@ -332,8 +333,9 @@ app.post('/api/content/old',(req,res)=>{
 							{
 								$or:
 								[ 
+									{ shares : { $in : following } },
 									{ author : { $in :  following } },
-									{ group  : { $in : groups } }   
+									{ group  : { $in : groups } }  ,
 								]
 							}
 						},
@@ -382,15 +384,16 @@ app.post('/api/content/old',(req,res)=>{
 						return;
 					}
 					let a = result.reduce( ( cur, a , i ) => a._id==lower_id ? i : cur , -1 );
-					let lower = a >= 0 ? a :  0;
+					console.log(a);
+					let lower =( a >= 0 ? a :  0);
 					let end = Math.min( 5 , result.length-lower );
 
 
-
+					// console.log(lower);
 					let r = result.splice(lower,lower+end);
-					// console.log(JSON.stringify(r.length));
-					if(r[0])
-						r.splice(0,1);
+					console.log(JSON.stringify(r[1]));
+					// if(!r[0])
+					// 	r.splice(0,1);
 					res.send(( r[0] ?  r : {err: "Yey! You reached the end."}) );
 					// res.send(result);
 				}

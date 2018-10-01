@@ -237,7 +237,7 @@ app.controller("dashboardController",($scope,$http,$location) => {
 				for(let i=0; i<res.length ; i++)
 				{
 					let a = res[i];
-					// console.log(a);
+					console.log(a);
 					page.contents.push(a);
 				}
 			});
