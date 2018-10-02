@@ -548,6 +548,9 @@ app.controller("dashboardController",($scope,$http,$location) => {
 
 	$scope.pages.search.run();
 
+
+	//contents
+
 	$scope.content = {};
 	$scope.content.press_like = (i)=>
 	{
@@ -600,6 +603,11 @@ app.controller("dashboardController",($scope,$http,$location) => {
 				return notify(res.err, "danger");
 			i.shares.splice( i.shares.indexOf($scope.user._id) , 1 );
 		});		
+	}
+
+	$scope.content.press_reply = (i) =>
+	{
+		$("#conversation-modal").modal('toggle');
 	}
 
 	$scope.goto("home");

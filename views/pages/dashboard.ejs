@@ -238,7 +238,7 @@
 							<div class="text-center">
 								<button ng-click='content.press_like(i)' class="btn btn-sm btn-round btn-fill " ng-class='{ "btn-danger": i.likes.includes(user._id) }'> {{ i.likes.length }} &nbsp <i class="fa fa-heart"></i></button> 
 								<button ng-click='content.press_share(i)' class="btn btn-sm btn-round btn-fill " ng-class=' { "btn-success" : i.shares.includes(user._id) } '> {{ i.shares.length }} &nbsp <i class="fa fa-retweet"></i></button> 
-								<button class="btn btn-sm btn-round btn-fill "> {{ i.replies.length }} &nbsp <i class="fa fa-comment"></i></button> 
+								<button ng-click='content.press_reply(i)' class="btn btn-sm btn-round btn-fill "> {{ i.replies.length }} &nbsp <i class="fa fa-comment"></i></button> 
 							</div>
 							<br>
 						</div>
@@ -547,6 +547,57 @@
 	        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
 	        <div ng-if='pages.root.modal.prompt' class="alert alert-danger">Please provide correct information</div>
 	        <button type="button" class="btn btn-danger" ng-click='pages.root.modal.submit_delete()'>Confirm</button>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+
+	<div class="modal fade" id="conversation-modal" tabindex="-1" role="dialog" aria-labelledby="conversation-modal-Label" aria-hidden="true">
+	  <div class="modal-dialog modal-dialog-centered" style="margin-left: 15vw" role="document">
+	    <div class="modal-content" style="width: 70vw;">
+	      <div class="modal-header"></div>
+	      <div class="modal-body">
+	      		<div class="row">
+	      			<div class="col-md-5">
+	      				<div>
+				      		<h4>Conversation</h4>
+	      					<p>
+	      						Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+	      						tempor incididunt ut labore et dolore magna aliqua.	
+	      					</p>
+	      					<small class="text-muted">By Justine Che T. Romero</small>
+	      					<br>
+	      					<br>
+	      					<div>
+	      						<button class="btn btn-danger btn-round"> <i class="fa fa-heart"></i> </button>
+	      						<button class="btn btn-danger btn-round"> <i class="fa fa-share"></i> </button>
+	      					</div>
+	      					<br><br>
+	      				</div>
+	      			</div>
+	      			<div class="col-md-7">
+	      				Replies
+	      				<div style="overflow-y: scroll; height: 30vh">
+		      				<ul class="list-group">
+		      					<li class="list-group-item" ng-repeat='i in [1,2,3,4,5,6,7,8,9,10]' >
+		      						<p>
+		      							Try
+		      						</p>
+			      					<small class="text-muted">By Gerard Marcial Sopsop</small>
+		      					</li>
+		      				</ul>
+	      				</div>
+	      				<hr>
+	      				<form class="form-inline">
+		      				&nbsp&nbsp <textarea placeholder="Write something ..." style="width: 80%" class="form-control"></textarea> &nbsp&nbsp&nbsp&nbsp <button class="btn btn-primary btn-fill btn-round"> <i class="fa fa-paper-plane"></i></button>
+	      				</form>
+	      			</div>
+	      		</div>
+
+
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
 	      </div>
 	    </div>
 	  </div>
