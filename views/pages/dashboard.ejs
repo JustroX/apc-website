@@ -553,24 +553,21 @@
 	</div>
 
 	<div class="modal fade" id="conversation-modal" tabindex="-1" role="dialog" aria-labelledby="conversation-modal-Label" aria-hidden="true">
-	  <div class="modal-dialog modal-dialog-centered" style="margin-left: 15vw" role="document">
-	    <div class="modal-content" style="width: 70vw;">
+	  <div class="modal-dialog modal-dialog-centered" style="margin-left: 15vw; margin-top: -10vh " role="document">
+	    <div class="modal-content" style="width: 70vw; ">
 	      <div class="modal-header"></div>
 	      <div class="modal-body">
 	      		<div class="row">
 	      			<div class="col-md-5">
 	      				<div>
 				      		<h4>Conversation</h4>
-	      					<p>
-	      						Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-	      						tempor incididunt ut labore et dolore magna aliqua.	
-	      					</p>
-	      					<small class="text-muted">By Justine Che T. Romero</small>
+	      					<p ng-bind-html='content.reply_author.value'></p>
+	      					<small class="text-muted">By {{ content.reply_author.author[0].name.first + " " + content.reply_author.author[0].name.middle + " " +  content.reply_author.author[0].name.last   }}</small>
 	      					<br>
 	      					<br>
 	      					<div>
-	      						<button class="btn btn-danger btn-round"> <i class="fa fa-heart"></i> </button>
-	      						<button class="btn btn-danger btn-round"> <i class="fa fa-share"></i> </button>
+	      						<button class="btn btn-danger btn-round" ng-click=''> {{ content.reply_author.likes.length }} &nbsp&nbsp <i class="fa fa-heart"></i> </button>
+	      						<button class="btn btn-danger btn-round" ng-click=''> {{ content.reply_author.shares.length }} &nbsp&nbsp <i class="fa fa-retweet"></i> </button>
 	      					</div>
 	      					<br><br>
 	      				</div>
@@ -579,17 +576,23 @@
 	      				Replies
 	      				<div style="overflow-y: scroll; height: 30vh">
 		      				<ul class="list-group">
-		      					<li class="list-group-item" ng-repeat='i in [1,2,3,4,5,6,7,8,9,10]' >
+		      					<li class="list-group-item" ng-repeat='i in content.reply_author.replies' >
+		      						<p ng-bind-html='i.value'></p>
+			      					<small class="text-muted">By {{ i.author }}</small>
+		      					</li>
+		      					<li class="list-group-item text-center" ng-if='content.reply_author.replies.length ==0'>
+		      						<br><br><br>
 		      						<p>
-		      							Try
+		      							Woah.. Such empty<br>
+		      							<small class="text-muted"> Type something to start a conversation </small>
 		      						</p>
-			      					<small class="text-muted">By Gerard Marcial Sopsop</small>
+		      						<br><br><br>
 		      					</li>
 		      				</ul>
 	      				</div>
 	      				<hr>
-	      				<form class="form-inline">
-		      				&nbsp&nbsp <textarea placeholder="Write something ..." style="width: 80%" class="form-control"></textarea> &nbsp&nbsp&nbsp&nbsp <button class="btn btn-primary btn-fill btn-round"> <i class="fa fa-paper-plane"></i></button>
+	      				<form class="form-inline" ng-submit='content.submit_reply()'>
+		      				&nbsp&nbsp <textarea ng-model='content.reply.content.value' placeholder="Write something ..." style="width: 80%" class="form-control"></textarea> &nbsp&nbsp&nbsp&nbsp <button type="submit" class="btn btn-primary btn-fill btn-round"> <i class="fa fa-paper-plane"></i></button>
 	      				</form>
 	      			</div>
 	      		</div>

@@ -349,6 +349,18 @@ app.post('/api/content/old',(req,res)=>{
 							}
 						},
 						{
+							$unwind: "$replies"
+						},
+						{
+							$lookup:
+							{
+								from: 'user',
+								localField: 'replies.author',
+								foreignField: '_id',
+								as: 'replies.author'
+							}
+						},
+						{
 							$sort:
 							{
 								date : -1
@@ -373,7 +385,14 @@ app.post('/api/content/old',(req,res)=>{
 
 
 							}
-						}
+						},
+						{
+							$group :
+							{
+								"_id": "$_id",
+								replies : { $push : "$replies" }
+							}
+						},
 					]).toArray(
 				(err,result)=>
 				{
@@ -527,7 +546,6 @@ app.post('/api/share/add',(req,res)=>{
 		let post_id = req.body.post;
 		db.collection('content').updateOne({ _id: ObjectId(post_id)},{ $push : { shares : id } } , (err, result)=>{
 			if(err) throw err;
-			db.collection('content')
 			res.send( { mes : "Post Shared"  } );
 		});
 	});
@@ -537,8 +555,20 @@ app.post('/api/share/remove',(req,res)=>{
 		let post_id = req.body.post;
 		db.collection('content').updateOne({ _id: ObjectId(post_id)},{ $pull : { shares : id } } , (err, result)=>{
 			if(err) throw err;
-			db.collection('content')
 			res.send( { mes : "Post Unshared"  } );
+		});
+	});
+});
+
+
+//reply
+app.post('/api/reply/add',(req,res)=>{
+	validate("user",req,res,(id)=>{
+		let post_id = req.body.post;
+		let content = req.body.content;
+		db.collection('content').updateOne({ _id : ObjectId(post_id) },{ $push : { replies : content } } , (err,result)=>{
+			if(err) throw err;
+			res.send( {mes : "Reply has been published."});
 		});
 	});
 });

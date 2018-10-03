@@ -551,7 +551,7 @@ app.controller("dashboardController",($scope,$http,$location) => {
 
 	//contents
 
-	$scope.content = {};
+	$scope.content = {reply:{content:{}}};
 	$scope.content.press_like = (i)=>
 	{
 		if(i.likes.includes($scope.user._id))
@@ -607,7 +607,21 @@ app.controller("dashboardController",($scope,$http,$location) => {
 
 	$scope.content.press_reply = (i) =>
 	{
+		$scope.content.reply_author = i;
 		$("#conversation-modal").modal('toggle');
+	}
+
+	$scope.content.submit_reply = () =>
+	{
+		if(!$scope.content.reply.content.value) return;
+		$scope.content.reply.content.author = $scope.user._id;
+		$http.post("/api/reply/add",{token:token, post : $scope.content.reply_author._id , content : $scope.content.reply.content }).then((res)=>{
+			res = res.data;
+			if(res.err)
+				return notify(res.err, "danger");
+			$scope.content.reply_author.replies.push($scope.content.reply.content);	
+			$scope.content.reply.content.value = "";
+		});
 	}
 
 	$scope.goto("home");
