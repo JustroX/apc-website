@@ -619,7 +619,8 @@ app.controller("dashboardController",($scope,$http,$location) => {
 			res = res.data;
 			if(res.err)
 				return notify(res.err, "danger");
-			$scope.content.reply_author.replies.push($scope.content.reply.content);	
+			$scope.content.reply.content.author = $scope.user.name;
+			$scope.content.reply_author.replies.push(JSON.parse(JSON.stringify($scope.content.reply.content)));	
 			$scope.content.reply.content.value = "";
 		});
 	}

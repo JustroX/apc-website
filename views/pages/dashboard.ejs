@@ -578,7 +578,7 @@
 		      				<ul class="list-group">
 		      					<li class="list-group-item" ng-repeat='i in content.reply_author.replies' >
 		      						<p ng-bind-html='i.value'></p>
-			      					<small class="text-muted">By {{ i.author }}</small>
+			      					<small class="text-muted">By {{ i.author.first + " " + i.author.middle +" "+i.author.last }}</small>
 		      					</li>
 		      					<li class="list-group-item text-center" ng-if='content.reply_author.replies.length ==0'>
 		      						<br><br><br>

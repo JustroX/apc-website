@@ -319,9 +319,9 @@ app.post('/api/content/old',(req,res)=>{
 			{ 
 				$or:
 				[ 
-					// { author : { $in :  following } },
+					{ author : { $in :  following } },
 					{ shares : { $in : following } },
-					// { group  : { $in : groups } }   
+					{ group  : { $in : groups } }   
 				]
 			};
 
@@ -349,7 +349,7 @@ app.post('/api/content/old',(req,res)=>{
 							}
 						},
 						{
-							$unwind: "$replies"
+							$unwind: {path:"$replies", preserveNullAndEmptyArrays: true},
 						},
 						{
 							$lookup:
@@ -361,10 +361,21 @@ app.post('/api/content/old',(req,res)=>{
 							}
 						},
 						{
-							$sort:
-							{
-								date : -1
-							}
+							$unwind: {path:"$replies.author", preserveNullAndEmptyArrays: true},
+						},
+						{
+
+					        $group: {
+					            _id: "$_id",
+					            author: { $first : "$author"},
+					            value: { $first : "$value"},
+					            date: { $first : "$date"},
+					            group: { $first : "$group"},
+					            likes: { $first : "$likes"},
+					            shares: { $first : "$shares"},
+					            origin: { $first : "$origin"},
+					            replies: { $push : "$replies"}
+					        }
 						},
 						{
 							$project:
@@ -380,17 +391,46 @@ app.post('/api/content/old',(req,res)=>{
 								group: true,
 								likes: true,
 								shares: true,
-								replies: true,
+								replies: 
+								{
+									$cond:
+									{
+										if: { $eq : [ [{}] , "$replies"  ] },
+										then : [],
+										else:
+										{
+											$map:
+											{
+												input: "$replies",
+												as : "reply",
+												in : 
+												{
+													$cond:
+													{
+														if : { $eq : [ {} , "$$reply" ]  },
+														then: "$REMOVE",
+														else:
+															{
+																value : "$$reply.value",
+																author :"$$reply.author.name",
+																author_id : "$$reply.author._id"
+															}
+													}
+												}
+											}
+										}
+
+									}
+								},
 								origin: true,
 
 
 							}
 						},
 						{
-							$group :
+							$sort:
 							{
-								"_id": "$_id",
-								replies : { $push : "$replies" }
+								date : -1
 							}
 						},
 					]).toArray(
@@ -566,6 +606,7 @@ app.post('/api/reply/add',(req,res)=>{
 	validate("user",req,res,(id)=>{
 		let post_id = req.body.post;
 		let content = req.body.content;
+		content.author = ObjectId(content.author);
 		db.collection('content').updateOne({ _id : ObjectId(post_id) },{ $push : { replies : content } } , (err,result)=>{
 			if(err) throw err;
 			res.send( {mes : "Reply has been published."});
