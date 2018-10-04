@@ -364,9 +364,9 @@
 							</p> -->
 							<hr>
 							<div class="text-center">
-								<button class="btn btn-sm btn-round btn-fill "> {{ i.likes.length }} &nbsp <i class="fa fa-heart"></i></button> 
-								<button class="btn btn-sm btn-round btn-fill "> {{ i.shares.length }} &nbsp <i class="fa fa-retweet"></i></button> 
-								<button class="btn btn-sm btn-round btn-fill "> {{ i.replies.length }} &nbsp <i class="fa fa-comment"></i></button> 
+								<button class="btn btn-sm btn-round btn-fill " ng-click='content.press_like(i)' ng-class='{ "btn-danger": i.likes.includes(user._id) }'> {{ i.likes.length }} &nbsp <i class="fa fa-heart"></i></button> 
+								<button class="btn btn-sm btn-round btn-fill " ng-click='content.press_share(i)' ng-class=' { "btn-success" : i.shares.includes(user._id) } '> {{ i.shares.length }} &nbsp <i class="fa fa-retweet"></i></button> 
+								<button class="btn btn-sm btn-round btn-fill " ng-click='content.press_reply(i)'> {{ i.replies.length }} &nbsp <i class="fa fa-comment"></i></button> 
 							</div>
 							<br>
 						</div>
@@ -444,9 +444,11 @@
 							</p> -->
 							<hr>
 							<div class="text-center">
-								<button class="btn btn-sm btn-round btn-fill "> {{ i.likes.length }} &nbsp <i class="fa fa-heart"></i></button> 
-								<button class="btn btn-sm btn-round btn-fill "> {{ i.shares.length }} &nbsp <i class="fa fa-retweet"></i></button> 
-								<button class="btn btn-sm btn-round btn-fill "> {{ i.replies.length }} &nbsp <i class="fa fa-comment"></i></button> 
+								
+
+								<button class="btn btn-sm btn-round btn-fill " ng-click='content.press_like(i)' ng-class='{ "btn-danger": i.likes.includes(user._id) }' > {{ i.likes.length }} &nbsp <i class="fa fa-heart"></i></button> 
+								<button class="btn btn-sm btn-round btn-fill " ng-click='content.press_share(i)' ng-class=' { "btn-success" : i.shares.includes(user._id) } '> {{ i.shares.length }} &nbsp <i class="fa fa-retweet"></i></button> 
+								<button class="btn btn-sm btn-round btn-fill " ng-click='content.press_reply(i)'> {{ i.replies.length }} &nbsp <i class="fa fa-comment"></i></button> 
 							</div>
 							<br>
 						</div>
@@ -566,8 +568,8 @@
 	      					<br>
 	      					<br>
 	      					<div>
-	      						<button class="btn btn-danger btn-round" ng-click=''> {{ content.reply_author.likes.length }} &nbsp&nbsp <i class="fa fa-heart"></i> </button>
-	      						<button class="btn btn-danger btn-round" ng-click=''> {{ content.reply_author.shares.length }} &nbsp&nbsp <i class="fa fa-retweet"></i> </button>
+	      						<button class="btn btn-danger btn-round" ng-click='content.press_like(content.reply_author)'   ng-class='{ "btn-fill": content.reply_author.likes.includes(user._id) } '>  {{ content.reply_author.likes.length }} &nbsp&nbsp <i class="fa fa-heart"></i> </button>
+	      						<button class="btn btn-danger btn-round" ng-click='content.press_share(content.reply_author)'  ng-class='{ "btn-fill": content.reply_author.shares.includes(user._id) }'> {{ content.reply_author.shares.length }} &nbsp&nbsp <i class="fa fa-retweet"></i> </button>
 	      					</div>
 	      					<br><br>
 	      				</div>

@@ -210,17 +210,6 @@ app.post('/api/content/new',(req,res)=>{
 			for(let i in result.groups)
 				groups.push(result.groups[i]);
 
-			// console.log(JSON.stringify(following));
-
-			let query_all_posts = 
-			{ 
-				$or:
-				[ 
-					{ author : { $in :  following } },
-					{ group  : { $in : groups } }   
-				]
-			};
-
 			db.collection('content')
 					.aggregate(
 					[
@@ -229,8 +218,9 @@ app.post('/api/content/new',(req,res)=>{
 							{
 								$or:
 								[ 
+									{ shares : { $in : following } },
 									{ author : { $in :  following } },
-									{ group  : { $in : groups } }   
+									{ group  : { $in : groups } }  ,
 								]
 							}
 						},
@@ -244,10 +234,33 @@ app.post('/api/content/new',(req,res)=>{
 							}
 						},
 						{
-							$sort:
+							$unwind: {path:"$replies", preserveNullAndEmptyArrays: true},
+						},
+						{
+							$lookup:
 							{
-								date : -1
+								from: 'user',
+								localField: 'replies.author',
+								foreignField: '_id',
+								as: 'replies.author'
 							}
+						},
+						{
+							$unwind: {path:"$replies.author", preserveNullAndEmptyArrays: true},
+						},
+						{
+
+					        $group: {
+					            _id: "$_id",
+					            author: { $first : "$author"},
+					            value: { $first : "$value"},
+					            date: { $first : "$date"},
+					            group: { $first : "$group"},
+					            likes: { $first : "$likes"},
+					            shares: { $first : "$shares"},
+					            origin: { $first : "$origin"},
+					            replies: { $push : "$replies"}
+					        }
 						},
 						{
 							$project:
@@ -263,12 +276,48 @@ app.post('/api/content/new',(req,res)=>{
 								group: true,
 								likes: true,
 								shares: true,
-								replies: true,
+								replies: 
+								{
+									$cond:
+									{
+										if: { $eq : [ [{}] , "$replies"  ] },
+										then : [],
+										else:
+										{
+											$map:
+											{
+												input: "$replies",
+												as : "reply",
+												in : 
+												{
+													$cond:
+													{
+														if : { $eq : [ {} , "$$reply" ]  },
+														then: "$REMOVE",
+														else:
+															{
+																value : "$$reply.value",
+																author :"$$reply.author.name",
+																author_id : "$$reply.author._id"
+															}
+													}
+												}
+											}
+										}
+
+									}
+								},
 								origin: true,
 
 
 							}
-						}
+						},
+						{
+							$sort:
+							{
+								date : -1
+							}
+						},
 					]).toArray(
 				(err,result)=>
 				{
@@ -493,17 +542,112 @@ app.post('/api/content/profile',(req,res)=>{
 
 		db.collection('content').aggregate(
 			[
-				{ $match : { author: ObjectId(target) } },
-				{ $sort : {date: -1} },
-				{ $lookup:
-					{
-						from: 'user',
-						localField: 'author',
-						foreignField: '_id',
-						as: 'author'
-					}
-				}
-			]).toArray((err,result)=>{
+						{
+							$match:
+							{
+								$or:
+								[ 
+									// { shares : { $in : following } },
+									{ author : ObjectId(target) },
+									// { group  : { $in : groups } }  ,
+								]
+							}
+						},
+						{
+							$lookup:
+							{
+								from: 'user',
+								localField: 'author',
+								foreignField: '_id',
+								as: 'author'
+							}
+						},
+						{
+							$unwind: {path:"$replies", preserveNullAndEmptyArrays: true},
+						},
+						{
+							$lookup:
+							{
+								from: 'user',
+								localField: 'replies.author',
+								foreignField: '_id',
+								as: 'replies.author'
+							}
+						},
+						{
+							$unwind: {path:"$replies.author", preserveNullAndEmptyArrays: true},
+						},
+						{
+
+					        $group: {
+					            _id: "$_id",
+					            author: { $first : "$author"},
+					            value: { $first : "$value"},
+					            date: { $first : "$date"},
+					            group: { $first : "$group"},
+					            likes: { $first : "$likes"},
+					            shares: { $first : "$shares"},
+					            origin: { $first : "$origin"},
+					            replies: { $push : "$replies"}
+					        }
+						},
+						{
+							$project:
+							{
+								_id:1,
+								author: 
+								{
+									_id: true,
+									name: true,
+								},
+								value: true,
+								date: true,
+								group: true,
+								likes: true,
+								shares: true,
+								replies: 
+								{
+									$cond:
+									{
+										if: { $eq : [ [{}] , "$replies"  ] },
+										then : [],
+										else:
+										{
+											$map:
+											{
+												input: "$replies",
+												as : "reply",
+												in : 
+												{
+													$cond:
+													{
+														if : { $eq : [ {} , "$$reply" ]  },
+														then: "$REMOVE",
+														else:
+															{
+																value : "$$reply.value",
+																author :"$$reply.author.name",
+																author_id : "$$reply.author._id"
+															}
+													}
+												}
+											}
+										}
+
+									}
+								},
+								origin: true,
+
+
+							}
+						},
+						{
+							$sort:
+							{
+								date : -1
+							}
+						},
+					]).toArray((err,result)=>{
 			if(err) throw err;
 			let idx = result.reduce((x,v,i)=> v._id == needle ? i : x  , -1);
 			// idx  = idx > 0 ? idx : -1;
