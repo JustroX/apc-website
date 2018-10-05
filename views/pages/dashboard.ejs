@@ -217,7 +217,7 @@
 						<div class="container">
 							<br>
 							<div class="container">
-								<b>{{ i.author[0].name.first + " " + i.author[0].name.middle + ". " + i.author[0].name.last }}</b> <small> {{ i.origin ? "|" + i.origin : "" }} | 2hrs 	</small>
+								<b style="cursor: pointer;" ng-click='pages.search.visit(i.author[0])'>{{ i.author[0].name.first + " " + i.author[0].name.middle + ". " + i.author[0].name.last }}</b> <small> {{ i.origin ? "|" + i.origin : "" }} | 2hrs 	</small>
 							</div>
 								<hr>
 
@@ -564,7 +564,7 @@
 	      				<div>
 				      		<h4>Conversation</h4>
 	      					<p ng-bind-html='content.reply_author.value'></p>
-	      					<small class="text-muted">By {{ content.reply_author.author[0].name.first + " " + content.reply_author.author[0].name.middle + " " +  content.reply_author.author[0].name.last   }}</small>
+	      					<small style="cursor: pointer;" class="text-muted"  data-dismiss="modal" ng-click='pages.search.visit({_id:content.reply_author.author[0]._id})'>By {{ content.reply_author.author[0].name.first + " " + content.reply_author.author[0].name.middle + " " +  content.reply_author.author[0].name.last   }}</small>
 	      					<br>
 	      					<br>
 	      					<div>
@@ -580,8 +580,8 @@
 		      				<ul class="list-group">
 		      					<li class="list-group-item" ng-repeat='i in content.reply_author.replies' >
 		      						<p ng-bind-html='i.value'></p>
-			      					<small class="text-muted">By {{ i.author.first + " " + i.author.middle +" "+i.author.last }}</small>
-			      					<small class="text-muted float-right" style="cursor: pointer;" ng-click='content.press_delete_reply(i)'><i ng-if='!content.delete_confirm' class="fa fa-trash"></i> <b ng-if='content.delete_confirm && content.delete_selected == i ' style="color: red"><i class="fa fa-trash"></i> Really?</b> </small>
+			      					<small class="text-muted" style="cursor: pointer;"  data-dismiss="modal" ng-click='pages.search.visit({ _id: i.author_id })'>By {{ i.author.first + " " + i.author.middle +" "+i.author.last }}</small>
+			      					<small ng-if='i.author_id == user._id' class="text-muted float-right" style="cursor: pointer;" ng-click='content.press_delete_reply(i)'><i ng-if='!content.delete_confirm' class="fa fa-trash"></i> <b ng-if='content.delete_confirm && content.delete_selected == i ' style="color: red"><i class="fa fa-trash"></i> Really?</b> </small>
 		      					</li>
 		      					<li class="list-group-item text-center" ng-if='content.reply_author.replies.length ==0'>
 		      						<br><br><br>
