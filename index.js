@@ -192,6 +192,9 @@ app.post('/api/content/',(req,res)=>{
 		});
 	});
 });
+
+
+
 app.post('/api/content/new',(req,res)=>{
 	validate('user',req,res,(id)=>{
 		let upper_id = req.body.upper_id;
@@ -298,7 +301,8 @@ app.post('/api/content/new',(req,res)=>{
 															{
 																value : "$$reply.value",
 																author :"$$reply.author.name",
-																author_id : "$$reply.author._id"
+																author_id : "$$reply.author._id",
+																date: "$$reply.date",
 															}
 													}
 												}
@@ -462,7 +466,8 @@ app.post('/api/content/old',(req,res)=>{
 															{
 																value : "$$reply.value",
 																author :"$$reply.author.name",
-																author_id : "$$reply.author._id"
+																author_id : "$$reply.author._id",
+																date : "$$reply.date",
 															}
 													}
 												}
@@ -627,7 +632,8 @@ app.post('/api/content/profile',(req,res)=>{
 															{
 																value : "$$reply.value",
 																author :"$$reply.author.name",
-																author_id : "$$reply.author._id"
+																author_id : "$$reply.author._id",
+																date : "$$reply.date"
 															}
 													}
 												}
@@ -751,12 +757,26 @@ app.post('/api/reply/add',(req,res)=>{
 		let post_id = req.body.post;
 		let content = req.body.content;
 		content.author = ObjectId(content.author);
+		content.date = new Date(content.date);
+		console.log(content.date);
 		db.collection('content').updateOne({ _id : ObjectId(post_id) },{ $push : { replies : content } } , (err,result)=>{
 			if(err) throw err;
 			res.send( {mes : "Reply has been published."});
 		});
 	});
 });
+app.post('/api/reply/delete',(req,res)=>
+{
+	validate("user",req,res,(id)=>{
+		let obj = req.body.obj;
+		let post_id = req.body.post_id;
+		console.log(" eto oh "+JSON.stringify(obj.author_id));
+		db.collection('content').updateOne({ _id : ObjectId(post_id)},{ $pull : {replies: { value : obj.value , author: ObjectId(obj.author_id) , date: new Date(obj.date) } } },(err,result)=>{
+			if(err) throw err;
+			res.send( {mes: "Reply has been removed"} );
+		});
+	});
+})
 
 
 //to fetch dependencies

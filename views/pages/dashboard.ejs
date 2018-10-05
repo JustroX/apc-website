@@ -581,6 +581,7 @@
 		      					<li class="list-group-item" ng-repeat='i in content.reply_author.replies' >
 		      						<p ng-bind-html='i.value'></p>
 			      					<small class="text-muted">By {{ i.author.first + " " + i.author.middle +" "+i.author.last }}</small>
+			      					<small class="text-muted float-right" style="cursor: pointer;" ng-click='content.press_delete_reply(i)'><i ng-if='!content.delete_confirm' class="fa fa-trash"></i> <b ng-if='content.delete_confirm && content.delete_selected == i ' style="color: red"><i class="fa fa-trash"></i> Really?</b> </small>
 		      					</li>
 		      					<li class="list-group-item text-center" ng-if='content.reply_author.replies.length ==0'>
 		      						<br><br><br>

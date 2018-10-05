@@ -615,14 +615,33 @@ app.controller("dashboardController",($scope,$http,$location) => {
 	{
 		if(!$scope.content.reply.content.value) return;
 		$scope.content.reply.content.author = $scope.user._id;
+		$scope.content.reply.content.date  = new Date();
 		$http.post("/api/reply/add",{token:token, post : $scope.content.reply_author._id , content : $scope.content.reply.content }).then((res)=>{
 			res = res.data;
 			if(res.err)
 				return notify(res.err, "danger");
 			$scope.content.reply.content.author = $scope.user.name;
+			$scope.content.reply.content.author_id = $scope.user._id;
 			$scope.content.reply_author.replies.push(JSON.parse(JSON.stringify($scope.content.reply.content)));	
 			$scope.content.reply.content.value = "";
+			$scope.content.reply.content.author_id = '';
 		});
+	}
+
+	$scope.content.delete_confirm = false;
+	$scope.content.delete_selected = null;
+	$scope.content.press_delete_reply = (i)=>
+	{
+		$scope.content.delete_selected = i;
+		if(!$scope.content.delete_confirm)
+			$scope.content.delete_confirm = true;
+		else
+			$http.post("/api/reply/delete",{token:token, obj : i, post_id : $scope.content.reply_author._id }).then((res)=>
+			{
+				res = res.data;
+				$scope.content.reply_author.replies.splice( $scope.content.reply_author.replies.indexOf(i) , 1  );
+				$scope.content.delete_confirm = false;
+			});
 	}
 
 	$scope.goto("home");
