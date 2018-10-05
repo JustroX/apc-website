@@ -504,9 +504,9 @@ app.post('/api/content/old',(req,res)=>{
 
 					// console.log(lower);
 					let r = result.splice(lower,lower+end);
-					console.log(JSON.stringify(r[1]));
-					// if(!r[0])
-					// 	r.splice(0,1);
+					// console.log(JSON.stringify(r[1]));
+					if(!r[0])
+						r.splice(0,1);
 					res.send(( r[0] ?  r : {err: "Yey! You reached the end."}) );
 					// res.send(result);
 				}
