@@ -93,11 +93,13 @@
 				  <div class="card card-body">
 		                Groups 
 		                <ul class="list-group small">
-		                	<li style="padding: 4px; padding-left: 20px" class="list-group-item">Basic Programming</li>
-		                	<li style="padding: 4px; padding-left: 20px" class="list-group-item">Software Dev</li>
-		                	<li style="padding: 4px; padding-left: 20px" class="list-group-item">Competitive Programming</li>
-		                	<li style="padding: 4px; padding-left: 20px" class="list-group-item">+ Add new</li>
+		                	<li style="padding: 4px; padding-left: 20px" class="list-group-item">Grade 12</li>
+		                	<li style="padding: 4px; padding-left: 20px" class="list-group-item">APC 2018</li>
+		                	<li style="padding: 4px; padding-left: 20px" class="list-group-item">Hello</li>
+		                	<li style="padding: 4px; padding-left: 20px" class="list-group-item">Hi po</li>
 		                </ul>
+		                <hr>
+		                <button  ng-click="sidebar.group.add.show()" class="btn btn-fill btn-sm">Create your own group</button>
 				  </div>
 				</div>
 				<div class="collapse" id="collapsible-friends">
@@ -123,8 +125,7 @@
 				<div class="text-muted" >
 					<small>&nbsp&nbsp&nbsp About | Privacy | Terms | Cookies | Feedback </small>
 				</div>
-			</div>
-			
+			</div>			
 		</div>
 
 	</div>
@@ -139,7 +140,7 @@
 		</div>
 
 		<div class="col-md-8">
-			<div ng-show='is_here("home")'>
+			<div ng-show='is_here("home") || is_here("group_active")'>
 				<div class="card" ng-if='!editor.active'>
 					<div class="card-body">
 						<small> <b>Home</b> > Post</small>
@@ -165,87 +166,111 @@
 
 			<div ng-if='is_here("group")'>
 				<!-- GROUPS -->
-				<div class="card">
+				<div class="card" ng-if='!sidebar.group.add.active'>
 					<div class="card-body">
 						<div class="container">
 							<br>
-							 GROUPS
+							 BROWSE GROUPS  <button ng-click="sidebar.group.add.show()" class="btn btn-fill btn-sm float-right">Create new Group</button>
 							<br><br>
 
 							<div class="row">
-								<div class="col-md-4" ng-repeat=' i in [1,2,3] '>
-									<div class="card">
+								<div class="col-md-3" ng-repeat=' i in [1,2,3,4,5,6,7,8,9,10] '>
+									<div class="card" >
 										<div class="card-body">
 											<small></small>
-											<i class="fa fa-star"></i> <b>Grade 8 - Pips</b>
+											<b>Grade 8 - Pips</b>
 											<hr>
 											<p>
 												<small>
 													Members: 2 <br>
-													Points: 23
 												</small>
 											</p>
+											<button class="btn btn-primary btn-sm btn-fill">Join</button>
+											<button class="btn btn-success btn-sm btn-fill">View</button>
 										</div>
 									</div>
 								</div>
 							</div>
 
-
-							<div class="text-center">
-								<div class="btn btn-round text-center">LOAD MORE</div>
-							</div>
 							<br><br>
 						</div>
 					</div>
 				</div>
 
-				<!-- COURSES -->
-				<div ng-if='false' class="card">
+				<div class="card" ng-if='sidebar.group.add.active'>
 					<div class="card-body">
 						<div class="container">
-							<br>
-							PARTICIPATED COURSES
-							<br><br>
+							<h4>New Group Details</h4>
+							<p>
+								Groups can help you communicate bla bla bla Lorem ipsum dolor sit amet.
+							</p>
+							<div class="container text-center">
+								<br>
+								<form>
+									<div class="row">
+										<div class="col-md-6">
+											Group Name
+											<input class="form-control" required placeholder="Group name">
+											<br>
+											Description
+											<small></small>
+											<textarea class="form-control" required placeholder="What is this group for?" style="height: 20vh"></textarea>
+											<br>
+											<hr>
+											Admins
+											<ul class="list-group">
+												<li class="list-group-item" style="padding: 5px; text-align: left; padding-left: 10px">Justine Che T. Romero</li>
+											</ul>
+											<input class="form-control" placeholder="Type something">
 
-							<div class="card" >
-								<div class="card-body">
+											<hr>
+											Members
+											<ul class="list-group">
+												<li class="list-group-item" style="padding: 5px; text-align: left; padding-left: 10px">Justine Che T. Romero</li>
+											</ul>
+											<input class="form-control" placeholder="Type something">
+											
+											
 
-									<div ng-repeat='i in [1,2,3,4]'>
-										<b>Introduction to Programming</b>
-										<p style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-											Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-											tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-											quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-											consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-											cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-											proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-										</p>
-										<hr>
+										</div>
+										<div class="col-md-6">
+											<div class="container">
+												<br>
+												<select class="form-control">
+													<option value="public">Public</option>
+													<option value="private">Private</option>
+												</select>
+												<br>
+												<div class="alert alert-warning" role="alert">
+													<b>Public</b> means anyone can view the group posts. 
+												</div>
+												<br>
+												<div class="container">
+													<button class="btn btn-success">Create Group</button>
+												</div>
+											</div>
+										</div>
 									</div>
-
-									<div class="text-center">
-										<div class="btn btn-round text-center">LOAD MORE</div>
-									</div>
-								</div>							
+								</form>
 							</div>
-							
-
-							<br><br>
+							<br><br><br>
 						</div>
-					</div>				
+					</div>
 				</div>
+			</div>
 
-				<!-- MODULES -->
-				<div ng-if='false' class="card">
-					<div class="card-body">
-						<div class="container">
-							<br>
-							YOUR MODULES
-							<br><br>
-							<div class="card" ng-repeat='i in [1,1,1] track by $index'>
-								<div class="card-body">
-									<small><b>Introduction to Programming</b> > Yey</small>
-									 <br>
+			<!-- COURSES -->
+			<div ng-if='false' class="card">
+				<div class="card-body">
+					<div class="container">
+						<br>
+						PARTICIPATED COURSES
+						<br><br>
+
+						<div class="card" >
+							<div class="card-body">
+
+								<div ng-repeat='i in [1,2,3,4]'>
 									<b>Introduction to Programming</b>
 									<p style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
 										Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
@@ -255,17 +280,49 @@
 										cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
 										proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 									</p>
+									<hr>
 								</div>
-							</div>
-							<div class="text-center">
-								<div class="btn btn-round text-center">LOAD MORE</div>
-							</div>
-							<br><br>
+
+								<div class="text-center">
+									<div class="btn btn-round text-center">LOAD MORE</div>
+								</div>
+							</div>							
 						</div>
+						
+
+						<br><br>
+					</div>
+				</div>				
+			</div>
+
+			<!-- MODULES -->
+			<div ng-if='false' class="card">
+				<div class="card-body">
+					<div class="container">
+						<br>
+						YOUR MODULES
+						<br><br>
+						<div class="card" ng-repeat='i in [1,1,1] track by $index'>
+							<div class="card-body">
+								<small><b>Introduction to Programming</b> > Yey</small>
+								 <br>
+								<b>Introduction to Programming</b>
+								<p style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+									Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+									tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+									quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+									consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+									cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+									proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+								</p>
+							</div>
+						</div>
+						<div class="text-center">
+							<div class="btn btn-round text-center">LOAD MORE</div>
+						</div>
+						<br><br>
 					</div>
 				</div>
-
-				<!-- HOME -->
 			</div>
 
 			<div ng-if='is_here("home")'>

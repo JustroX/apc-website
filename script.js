@@ -130,7 +130,7 @@ app.controller("dashboardController",($scope,$http,$location) => {
 		$location.path('/');
 	}
 
-	$scope.location = ["home"];
+	$scope.location = ["group"];
 	$scope.pages = {};
 
 	$scope.is_here = ( str )=>
@@ -546,6 +546,10 @@ app.controller("dashboardController",($scope,$http,$location) => {
 		}
 	});
 
+	$scope.addPage("group",(page)=>{
+
+	});
+
 	$scope.pages.search.run();
 
 
@@ -644,7 +648,31 @@ app.controller("dashboardController",($scope,$http,$location) => {
 			});
 	}
 
-	$scope.goto("home");
+
+
+
+	//Sidebar
+	$scope.sidebar = {
+		group:
+		{
+			add:
+			{
+				active: false,
+				show: ()=>
+				{
+					$scope.sidebar.group.add.active = true;
+				}
+			}
+		}
+	};
+
+
+
+
+
+
+
+	$scope.goto("group");
 	// alert("ere");
 
 
