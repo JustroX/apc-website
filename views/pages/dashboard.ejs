@@ -53,11 +53,34 @@
 		                </ul>
 				  </div>
 				</div>
+				<div ng-if='provider=="group" || provider=="course"' class="collapse" id="collapsible-properties">
+				  <div class="card card-body">
+		                <div ng-if=" provider=='group' ">
+		                	<h5><i class="fa fa-info"></i> Group Information</h5>
+		                	<small>
+			                	<div class="card card-body">
+			                		<b>{{ sidebar.group.selected.name }}</b>
+		                			<small class="text-muted">
+			                			{{ sidebar.group.selected.description }}
+		                			</small>
+			                	</div>
+		                	</small>
+			                <ul class="list-group small">
+			                	<li style="cursor: pointer;padding: 4px; padding-left: 20px" class="list-group-item site-menu">Group Settings</li>
+			                	<li style="cursor: pointer;padding: 4px; padding-left: 20px" class="list-group-item site-menu">Admins</li>
+			                	<li style="cursor: pointer;padding: 4px; padding-left: 20px" class="list-group-item site-menu">Members</li>
+			                	<li style="cursor: pointer;padding: 4px; padding-left: 20px; color: red" class="list-group-item site-menu">Delete Group</li>
+			                </ul>
+		                </div>
+				  </div>
+				</div>
 				<div class="card" style="border-radius: 50px">
 					<div class="card-body" style="text-align: center; cursor: pointer">
 						<button data-toggle="collapse" data-target="#collapsible-courses" aria-expanded="false" aria-controls="collapsible-courses"  class="btn btn-round"> <i class="fa fa-briefcase"></i>  </button>
 						<button data-toggle="collapse" data-target="#collapsible-groups" aria-expanded="false" aria-controls="collapsible-groups" class="btn btn-round"> <i class="fa fa-bicycle"></i> </button>
 						<button data-toggle="collapse" data-target="#collapsible-friends" aria-expanded="false" aria-controls="collapsible-friends"  class="btn btn-round"> <i class="fa fa-grin-squint"></i> </button>
+
+						<button ng-if='provider=="group" || provider=="course"' data-toggle="collapse" data-target="#collapsible-properties" aria-expanded="false" aria-controls="collapsible-friends"  class="btn btn-round"> <i class="fa fa-coffee"></i> </button>
 
 					</div>
 				</div>

@@ -718,6 +718,7 @@ app.controller("dashboardController",($scope,$http,$location) => {
 			},
 			view: (i)=>
 			{
+				window.scrollTo(0, 0);
 				$scope.sidebar.group.selected  = i;
 				$scope.provider = "group";
 				$scope.goto("home");
