@@ -711,7 +711,7 @@ app.post('/api/follow/remove',(req,res)=>{
 app.post('/api/like/add',(req,res)=>{
 	validate("user",req,res,(id)=>{
 		let post_id = req.body.post;
-		db.collection('content').updateOne({ _id: ObjectId(post_id)},{ $push : { likes : id } } , (err,result)=>{
+		db.collection('content').updateOne({ _id: ObjectId(post_id)},{ $addToSet : { likes : id } } , (err,result)=>{
 			if(err) throw err;
 			res.send({ mes : "Post Like"});
 		});
@@ -734,7 +734,7 @@ app.post('/api/like/remove',(req,res)=>{
 app.post('/api/share/add',(req,res)=>{
 	validate("user",req,res,(id)=>{
 		let post_id = req.body.post;
-		db.collection('content').updateOne({ _id: ObjectId(post_id)},{ $push : { shares : id } } , (err, result)=>{
+		db.collection('content').updateOne({ _id: ObjectId(post_id)},{ $addToSet : { shares : id } } , (err, result)=>{
 			if(err) throw err;
 			res.send( { mes : "Post Shared"  } );
 		});
@@ -770,13 +770,54 @@ app.post('/api/reply/delete',(req,res)=>
 	validate("user",req,res,(id)=>{
 		let obj = req.body.obj;
 		let post_id = req.body.post_id;
-		console.log(" eto oh "+JSON.stringify(obj.author_id));
 		db.collection('content').updateOne({ _id : ObjectId(post_id)},{ $pull : {replies: { value : obj.value , author: ObjectId(obj.author_id) , date: new Date(obj.date) } } },(err,result)=>{
 			if(err) throw err;
 			res.send( {mes: "Reply has been removed"} );
 		});
 	});
 })
+
+
+app.post('/api/group/add',(req,res)=>
+{
+	validate("user",req,res,(id)=>{
+		let form = req.body.form;
+
+		console.log(form);
+
+		//convert to ids
+		for(let i in form.admins)
+			form.admins[i] = ObjectId(form.admins[i]._id);
+		for(let i in form.members)
+			form.members[i] = ObjectId(form.members[i]._id);
+		form.admins.push(id);
+
+		let doc=
+		{
+			name : form.name,
+			description : form.description,
+			admins:  form.admins,
+			members: form.members,
+		}
+
+
+
+		db.collection('group').insertOne(doc,(err,result)=>
+		{
+			if(err) throw err;
+
+			//add them to the group
+			let  b = form.admins.concat(form.members);
+
+			db.collection('user').updateMany( { _id : { $in : b } } , { $addToSet: { groups: result.ops[0]._id } } , (err, result1) =>
+			{
+				if(err) throw err;
+				res.send({mes:"New group has been added."});
+			} );
+
+		});
+	});
+});
 
 
 //to fetch dependencies
