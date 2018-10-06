@@ -59,6 +59,12 @@ app.config( ($routeProvider) => {
 	})
 } );
 
+app.filter('capitalize', function() {
+    return function(input) {
+      return (!!input) ? input.charAt(0).toUpperCase() + input.substr(1).toLowerCase() : '';
+    }
+});
+
 app.controller("preloaderController",($scope,$http,$location) => {
 	token  = cookie.get("apc-token");
 	if(token) // 
@@ -129,8 +135,9 @@ app.controller("dashboardController",($scope,$http,$location) => {
 		cookie.set('apc-token',0,-1);
 		$location.path('/');
 	}
+	$scope.provider ="home";
 
-	$scope.location = ["group"];
+	$scope.location = ["home"];
 	$scope.pages = {};
 
 	$scope.is_here = ( str )=>
@@ -174,7 +181,6 @@ app.controller("dashboardController",($scope,$http,$location) => {
 			});
 		},1);
 
-		page.course = "";
 		page.posting = false;
 
 		page.post = ()=>
@@ -185,7 +191,11 @@ app.controller("dashboardController",($scope,$http,$location) => {
 			page.posting = true;
 			let content = quill.root.innerHTML;
 
-			$http.post('/api/content/add',{token:token,value:content,location:page.course}).
+			let origin = {};
+			if($scope.provider=="home") origin = { type: "profile"   };
+			if($scope.provider=="group") origin = { type: "group" , id: $scope.sidebar.group.selected._id };
+
+			$http.post('/api/content/add',{token:token,value:content, origin: origin }).
 			then(
 				(res)=>
 				{
@@ -209,41 +219,59 @@ app.controller("dashboardController",($scope,$http,$location) => {
 		page.upper_id = null;
 		page.lower_id = "";
 
+		if($scope.provider == "home") $scope.origin = "home";
+		if($scope.provider == "group") $scope.origin = $scope.sidebar.group.selected.name;
+
 		page.scrollup = ()=>
 		{
-			page.upper_id = page.contents[0];
-			if(page.upper_id) page.upper_id = page.upper_id._id;
-			$http.post('/api/content/new',{token:token,upper_id:page.upper_id}).then((res)=>{
-				res = res.data;
-				if(res.err) return console.log(res.err);
-				while(res.length !=0)
-					page.contents.unshift(res.pop());
-				console.log(res);
-			});
+			if($scope.provider == "home") 
+			{
+				page.upper_id = page.contents[0];
+				if(page.upper_id) page.upper_id = page.upper_id._id;
+				$http.post('/api/content/new',{token:token,upper_id:page.upper_id}).then((res)=>{
+					res = res.data;
+					if(res.err) return console.log(res.err);
+					while(res.length !=0)
+						page.contents.unshift(res.pop());
+					console.log(res);
+				});
+			}
+			if($scope.provider == "group")
+			{
+				$scope.sidebar.group.load_content_recent();
+			}
 		}
 		page.scrolldown = ()=>
 		{
-			page.lower_id = page.contents[page.contents.length-1];
-			if(page.lower_id) page.lower_id = page.lower_id._id;
-			$http.post('/api/content/old',{token:token,lower_id:page.lower_id}).then((res)=>{
-				res = res.data;
-				if(res.err)
-				{
-					notify("<b>"+res.err+"</b>");
-					return console.log(res.err);
-				}
-				// console.log(res.length);
-				// console.log(JSON.stringify(res));
-				for(let i=0; i<res.length ; i++)
-				{
-					let a = res[i];
-					console.log(a);
-					page.contents.push(a);
-				}
-			});
+			if($scope.provider == "home") 
+			{
+				page.lower_id = page.contents[page.contents.length-1];
+				if(page.lower_id) page.lower_id = page.lower_id._id;
+				$http.post('/api/content/old',{token:token,lower_id:page.lower_id}).then((res)=>{
+					res = res.data;
+					if(res.err)
+					{
+						notify("<b>"+res.err+"</b>");
+						return console.log(res.err);
+					}
+					// console.log(res.length);
+					// console.log(JSON.stringify(res));
+					for(let i=0; i<res.length ; i++)
+					{
+						let a = res[i];
+						console.log(a);
+						page.contents.push(a);
+					}
+				});
+			}
+			if($scope.provider == "group")
+			{
+				$scope.sidebar.group.load_content();
+			}
 		}
 
-		page.scrolldown();
+
+			page.scrolldown();
 
 		// page.load_next = ()=>
 		// {
@@ -554,7 +582,7 @@ app.controller("dashboardController",($scope,$http,$location) => {
 
 
 	//contents
-
+	$scope.origin = "";
 	$scope.content = {reply:{content:{}}};
 	$scope.content.press_like = (i)=>
 	{
@@ -655,6 +683,45 @@ app.controller("dashboardController",($scope,$http,$location) => {
 	$scope.sidebar = {
 		group:
 		{
+			selected : null,
+			list: [],
+			load: ()=>
+			{
+				$http.post('/api/group/user',{token:token, id: $scope.user._id }).then((res)=>
+				{
+					res = res.data;
+					if(res.err) return notify(res.err,"danger");
+					$scope.sidebar.group.list = res;
+				});
+			},
+			load_content_recent : ()=>
+			{
+				$scope.provider = "group";
+				$scope.goto("home");
+			},
+			load_content: ()=>
+			{
+
+				$http.post('/api/group/content',{token: token, id: $scope.sidebar.group.selected._id }).then((res)=>
+				{
+					res = res.data;
+					if(res.err) return console.log(res.err, "danger");
+
+					for(let i=0; i<res.length ; i++)
+					{
+						let a = res[i];
+						console.log(a);
+						$scope.pages.home.contents.push(a);
+					}
+				});
+
+			},
+			view: (i)=>
+			{
+				$scope.sidebar.group.selected  = i;
+				$scope.provider = "group";
+				$scope.goto("home");
+			},
 			add:
 			{
 				active: false,
@@ -758,13 +825,15 @@ app.controller("dashboardController",($scope,$http,$location) => {
 		}
 	};
 
+	$scope.sidebar.group.load();
 
 
 
 
 
 
-	$scope.goto("group");
+
+	$scope.goto("home");
 	// alert("ere");
 
 

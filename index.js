@@ -350,7 +350,6 @@ app.post('/api/content/new',(req,res)=>{
 app.post('/api/content/old',(req,res)=>{
 	validate('user',req,res,(id)=>{
 		let lower_id = req.body.lower_id;
-
 		let following = [];
 		let groups = [];
 		//get following
@@ -366,17 +365,6 @@ app.post('/api/content/old',(req,res)=>{
 			for(let i in result.groups)
 				groups.push(result.groups[i]);
 
-			// console.log(JSON.stringify(following));
-
-			let query_all_posts = 
-			{ 
-				$or:
-				[ 
-					{ author : { $in :  following } },
-					{ shares : { $in : following } },
-					{ group  : { $in : groups } }   
-				]
-			};
 
 			db.collection('content')
 					.aggregate(
@@ -387,8 +375,11 @@ app.post('/api/content/old',(req,res)=>{
 								$or:
 								[ 
 									{ shares : { $in : following } },
-									{ author : { $in :  following } },
-									{ group  : { $in : groups } }  ,
+									{ author : { $in :  following } , "origin.type": "profile" },
+									{ 
+										"origin.type" : "group",
+										"origin.id" : { $in : groups }
+									}  ,
 								]
 							}
 						},
@@ -411,6 +402,15 @@ app.post('/api/content/old',(req,res)=>{
 								localField: 'replies.author',
 								foreignField: '_id',
 								as: 'replies.author'
+							}
+						},
+						{
+							$lookup:
+							{
+								from: 'group',
+								localField: 'origin.id',
+								foreignField: '_id',
+								as: 'origin.value'
 							}
 						},
 						{
@@ -497,15 +497,15 @@ app.post('/api/content/old',(req,res)=>{
 						return;
 					}
 					let a = result.reduce( ( cur, a , i ) => a._id==lower_id ? i : cur , -1 );
-					console.log(a);
+					// console.log(a);
 					let lower =( a >= 0 ? a :  0);
 					let end = Math.min( 5 , result.length-lower );
 
 
 					// console.log(lower);
 					let r = result.splice(lower,lower+end);
-					// console.log(JSON.stringify(r[1]));
-					if(!r[0])
+					// console.log("Le me see " +JSON.stringify(r));
+					if(r.length==1 && lower_id)
 						r.splice(0,1);
 					res.send(( r[0] ?  r : {err: "Yey! You reached the end."}) );
 					// res.send(result);
@@ -522,12 +522,13 @@ app.post('/api/content/old',(req,res)=>{
 app.post('/api/content/add',(req,res)=>{
 	validate("user",req,res,(id)=>{
 		let value = req.body.value;
+		req.body.origin.id = ObjectId(req.body.origin.id);
 		db.collection('content').insertOne(
 			{
 				author: ObjectId(id),
 				value : value,
 				date : new Date(),
-				origin : req.body.location || "",
+				origin : req.body.origin,
 				shares: [],
 				likes: [],
 				replies: []
@@ -777,7 +778,7 @@ app.post('/api/reply/delete',(req,res)=>
 	});
 })
 
-
+//groups
 app.post('/api/group/add',(req,res)=>
 {
 	validate("user",req,res,(id)=>{
@@ -818,6 +819,168 @@ app.post('/api/group/add',(req,res)=>
 		});
 	});
 });
+app.post('/api/group/user',(req,res)=>
+{
+	validate("user",req,res,(id)=>
+	{
+		idx = req.body.id;
+		db.collection("user").aggregate(
+			[
+				{ $match : { _id : ObjectId(idx) } },
+				{ $project : { _id: 1, groups: 1  } },
+				{ $lookup: { from: 'group', localField: 'groups', foreignField: '_id', as: 'groups' }}
+			]).toArray((err,result)=>
+			{
+				if(err) throw err;
+				console.log(result);
+				res.send(result[0].groups);
+			});
+	});
+});
+app.post('/api/group/content',(req,res)=>
+{
+	validate('user',req,res,(id)=>{
+		let lower_id = req.body.lower_id;
+		let following = [];
+		let groups = [];
+
+		db.collection('content')
+				.aggregate(
+				[
+					{ $match: { origin: { type: "group" , 
+					id : ObjectId(req.body.id) 
+				}   }  },
+					{
+						$lookup:
+						{
+							from: 'user',
+							localField: 'author',
+							foreignField: '_id',
+							as: 'author'
+						}
+					},
+					{
+						$unwind: {path:"$replies", preserveNullAndEmptyArrays: true},
+					},
+					{
+						$lookup:
+						{
+							from: 'user',
+							localField: 'replies.author',
+							foreignField: '_id',
+							as: 'replies.author'
+						}
+					},
+					{
+						$lookup:
+						{
+							from: 'group',
+							localField: 'origin.id',
+							foreignField: '_id',
+							as: 'origin.value'
+						}
+					},
+					{
+						$unwind: {path:"$replies.author", preserveNullAndEmptyArrays: true},
+					},
+					{
+
+				        $group: {
+				            _id: "$_id",
+				            author: { $first : "$author"},
+				            value: { $first : "$value"},
+				            date: { $first : "$date"},
+				            group: { $first : "$group"},
+				            likes: { $first : "$likes"},
+				            shares: { $first : "$shares"},
+				            origin: { $first : "$origin"},
+				            replies: { $push : "$replies"}
+				        }
+					},
+					{
+						$project:
+						{
+							_id:1,
+							author: 
+							{
+								_id: true,
+								name: true,
+							},
+							value: true,
+							date: true,
+							group: true,
+							likes: true,
+							shares: true,
+							replies: 
+							{
+								$cond:
+								{
+									if: { $eq : [ [{}] , "$replies"  ] },
+									then : [],
+									else:
+									{
+										$map:
+										{
+											input: "$replies",
+											as : "reply",
+											in : 
+											{
+												$cond:
+												{
+													if : { $eq : [ {} , "$$reply" ]  },
+													then: "$REMOVE",
+													else:
+														{
+															value : "$$reply.value",
+															author :"$$reply.author.name",
+															author_id : "$$reply.author._id",
+															date : "$$reply.date",
+														}
+												}
+											}
+										}
+									}
+
+								}
+							},
+							origin: true,
+
+
+						}
+					},
+					{
+						$sort:
+						{
+							date : -1
+						}
+					},
+				]).toArray(
+			(err,result)=>
+			{
+				if(err) throw err;
+				if(!result[0]) 
+				{
+					res.send({err:"Yey! You reached the end."});
+					return;
+				}
+				let a = result.reduce( ( cur, a , i ) => a._id==lower_id ? i : cur , -1 );
+				console.log(a);
+				let lower =( a >= 0 ? a :  0);
+				let end = Math.min( 5 , result.length-lower );
+
+
+				let r = result.splice(lower,lower+end);
+				if(!r[0])
+					r.splice(0,1);
+				res.send(( r[0] ?  r : {err: "Yey! You reached the end."}) );
+			}
+		);
+	});
+});
+
+
+
+
 
 
 //to fetch dependencies
