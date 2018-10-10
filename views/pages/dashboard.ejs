@@ -17,7 +17,7 @@
     <br><br><br><br>
 	
 
-    <!-- //profile -->
+    <!-- //sidebar -->
 	<div style="position: fixed; width: 25vw; z-index: 1">
 		<div class="container">
 			<div class="container" style="position: fixed;bottom: 10px; width: 23vw">
@@ -66,9 +66,7 @@
 			                	</div>
 		                	</small>
 			                <ul class="list-group small">
-			                	<li style="cursor: pointer;padding: 4px; padding-left: 20px" class="list-group-item site-menu">Group Settings</li>
-			                	<li style="cursor: pointer;padding: 4px; padding-left: 20px" class="list-group-item site-menu">Admins</li>
-			                	<li style="cursor: pointer;padding: 4px; padding-left: 20px" class="list-group-item site-menu">Members</li>
+			                	<li style="cursor: pointer;padding: 4px; padding-left: 20px" class="list-group-item site-menu" ng-click='sidebar.group.edit.show()'>Group Settings</li>
 			                	<li style="cursor: pointer;padding: 4px; padding-left: 20px; color: red" class="list-group-item site-menu">Delete Group</li>
 			                </ul>
 		                </div>
@@ -128,7 +126,7 @@
 
 			<div ng-if='is_here("group")'>
 				<!-- GROUPS -->
-				<div class="card" ng-if='!sidebar.group.add.active'>
+				<div class="card" ng-if='!sidebar.group.add.active && !sidebar.group.edit.active'>
 					<div class="card-body">
 						<div class="container">
 							<br>
@@ -230,6 +228,90 @@
 													<b>Public</b> means that anyone can view the group posts. 
 												</div>
 												<div class="alert alert-warning" role="alert" ng-if=" sidebar.group.add.form.type == 'private' ">
+													<b>Private</b> means that only members view the group posts. 
+												</div>
+												<br>
+												<div class="container">
+													<button type="submit" class="btn btn-fill btn-success">Create Group</button>
+												</div>
+											</div>
+										</div>
+									</div>
+								</form>
+							</div>
+							<br><br><br>
+						</div>
+					</div>
+				</div>
+
+
+				<div class="card" ng-if='sidebar.group.edit.active'>
+					<div class="card-body">
+						<div class="container">
+							<h4>Edit Group Details
+							<button ng-click="sidebar.group.edit.hide()" class="btn btn-fill btn-sm float-right">Cancel</button>
+							</h4>
+							<p>
+								Groups can help you communicate bla bla bla Lorem ipsum dolor sit amet.
+							</p>
+							<div class="container">
+								<br>
+								<form ng-submit='sidebar.group.edit.submit()'>
+									<div class="row">
+										<div class="col-md-6">
+											Group Name
+											<input ng-model='sidebar.group.edit.form.name' class="form-control" required placeholder="Group name">
+											<br>
+											Description
+											<small></small>
+											<textarea ng-model='sidebar.group.edit.form.description' class="form-control" required placeholder="What is this group for?" style="height: 20vh"></textarea>
+											<br>
+											<hr>
+											Admins
+											<ol>
+												<li ng-repeat=' i in sidebar.group.edit.form.admins ' style="padding: 5px; text-align: left; padding-left: 10px">
+													<button ng-click='sidebar.group.edit.search.remove_admin(i)' type="button" class="btn btn-sm btn-danger btn-fill" style="width: 20px; height: 20px;padding: 0px"  >X</button>  
+													{{ i.name.first + " " + i.name.middle + " " + i.name.last }}
+												</li>
+											</ol>
+
+											<br>
+											<input ng-model='sidebar.group.edit.search.admin' ng-change='sidebar.group.edit.search.query()' class="form-control" placeholder="Search User">
+											<div class="list-group" ng-if='sidebar.group.edit.search.admin'>
+										    	<a ng-repeat=' i in  sidebar.group.edit.search.results_admin' href="javascript:void(0)" ng-click='sidebar.group.edit.search.select_admin(i)' class="list-group-item list-group-item-action">{{i.name.first + " "+i.name.middle+" "+i.name.last }}</a>
+										    </div>
+											<hr>
+											Members
+											<ol>
+												<li ng-repeat=' i in sidebar.group.edit.form.members ' style="padding: 5px; text-align: left; padding-left: 10px">
+													<button ng-click='sidebar.group.edit.search.remove_member(i)' type="button" class="btn btn-sm btn-danger btn-fill" style="width: 20px; height: 20px;padding: 0px"  >X</button>  
+													{{ i.name.first + " " + i.name.middle + " " + i.name.last }}
+												</li>
+											</ol>
+
+											<br>
+											<input ng-model='sidebar.group.edit.search.member' ng-change='sidebar.group.edit.search.query_member()' class="form-control" placeholder="Search User">
+											<div class="list-group" ng-if='sidebar.group.edit.search.member'>
+										    	<a ng-repeat=' i in  sidebar.group.edit.search.results_member' href="javascript:void(0)" ng-click='sidebar.group.edit.search.select_member(i)' class="list-group-item list-group-item-action">{{i.name.first + " "+i.name.middle+" "+i.name.last }}</a>
+										    </div>
+
+
+											
+											
+
+										</div>
+										<div class="col-md-6">
+											<div class="container">
+												<br>
+												<select ng-model='sidebar.group.edit.form.type' class="form-control">
+													<option value="public" selected >Public</option>
+													<option value="private">Private</option>
+												</select>
+												<br>
+												<div class="alert alert-warning" role="alert" ng-if=" sidebar.group.edit.form.type == 'public' ">
+													<b>Public</b> means that anyone can view the group posts. 
+												</div>
+												<div class="alert alert-warning" role="alert" ng-if=" sidebar.group.edit.form.type == 'private' ">
 													<b>Private</b> means that only members view the group posts. 
 												</div>
 												<br>
@@ -710,6 +792,8 @@
 	    </div>
 	  </div>
 	</div>
+
+	
 
 </div>
 

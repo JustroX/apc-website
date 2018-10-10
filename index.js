@@ -978,6 +978,43 @@ app.post('/api/group/content',(req,res)=>
 	});
 });
 
+app.post('/api/group/load',(req,res)=>
+{
+	validate("user",req,res,(id)=>{
+		//aggregate
+		db.collection('group').aggregate(
+		[
+			{ $match: { _id : ObjectId(req.body.id)}},
+			{ $lookup : { from: 'user' , localField: 'admins' , foreignField: '_id', as: 'admins' } },
+			{ $unwind: { path:"$admins" , preserveNullAndEmptyArrays: true} },
+			{ $project: { _id: 1, name: 1, description: 1, members: 1, "admins.name": 1 ,"admins._id": 1 } },
+			{ $group: {
+		            _id: "$_id",
+		            name: { $first : "$name"},
+		            description: { $first : "$description"},
+		            members: { $first : "$members"},
+		            admins: { $push : "$admins"},
+		        }
+			},
+			{ $unwind: { path:"$members" , preserveNullAndEmptyArrays: true} },
+			{ $lookup : { from: 'user' , localField: 'members' , foreignField: '_id', as: 'members' } },
+			{ $project: { _id: 1, name: 1, description: 1, admins: 1, "members.name": 1 ,"members._id": 1 } },
+			{ $group: {
+		            _id: "$_id",
+		            name: { $first : "$name"},
+		            description: { $first : "$description"},
+		            admins: { $first : "$admins"},
+		            members: { $push : "$members"},
+		        }
+			},
+		]).toArray((err,result)=>
+		{
+			if(err) throw err;
+			// console.log(result);
+			res.send(result[0]);
+		});
+	});
+})
 
 
 

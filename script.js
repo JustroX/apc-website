@@ -822,6 +822,112 @@ app.controller("dashboardController",($scope,$http,$location) => {
 						$scope.goto("home");
 					});
 				}
+			},
+
+			edit:
+			{
+				active: false,
+				show: ()=>
+				{
+					$http.post("/api/group/load",{token:token, id: $scope.sidebar.group.selected._id}).then((res)=>
+					{
+						res = res.data;
+						$scope.sidebar.group.edit.form = res;
+						$scope.goto("group");
+						$scope.sidebar.group.edit.active = true;
+					});
+				},
+				hide: ()=>
+				{
+					$scope.sidebar.group.edit.active = false;
+				},
+				form:
+				{
+					name: "",
+					description: "",
+					admins : [],
+					members : [], 
+					type : "public",
+				},
+				search:
+				{
+					admin: "",
+					member : "",
+					results_admin : [],
+					results_member : [],
+
+					query : ()=>
+					{
+						$http.post('/api/search',{token:token , query: $scope.sidebar.group.edit.search.admin }).then((res)=>{
+							res = res.data;
+							if(res.err) return console.log(res.err);
+							$scope.sidebar.group.edit.search.results_admin = res;
+						});
+					},
+
+					query_member : ()=>
+					{
+						$http.post('/api/search',{token:token , query: $scope.sidebar.group.edit.search.member }).then((res)=>{
+							res = res.data;
+							if(res.err) return console.log(res.err);
+							$scope.sidebar.group.edit.search.results_member = res;
+						});
+					},
+
+					select_admin: (i)=>
+					{
+						if($scope.sidebar.group.edit.form.admins.includes(i) || i._id == $scope.user._id)
+							return;
+
+						$scope.sidebar.group.edit.form.admins.push(i);
+						$scope.sidebar.group.edit.search.admin = "";
+					},
+
+					select_member: (i)=>
+					{
+						if($scope.sidebar.group.edit.form.members.includes(i))
+							return;
+
+						$scope.sidebar.group.edit.form.members.push(i);
+						$scope.sidebar.group.edit.search.member = "";
+					},
+					remove_admin : (i)=>
+					{
+						for( let j in $scope.sidebar.group.edit.form.admins )
+						{
+							if($scope.sidebar.group.edit.form.admins[j]._id == i._id)
+							{
+								$scope.sidebar.group.edit.form.admins.splice(j,1);
+								return;
+							}
+						}
+					},
+					remove_member : (i)=>
+					{
+						for( let j in $scope.sidebar.group.edit.form.members )
+						{
+							if($scope.sidebar.group.edit.form.members[j]._id == i._id)
+							{
+								$scope.sidebar.group.edit.form.members.splice(j,1);
+								return;
+							}
+						}
+					}
+				},
+				submit: ()=>
+				{
+					$http.post('/api/group/add',{token:token, form: $scope.sidebar.group.edit.form}).then((res)=>
+					{
+						res = res.data;
+						if(res.err) return notify(res.err,"danger");
+						notify("New group has been added.");
+						$scope.sidebar.group.add.form = 
+						{
+							name : "", description: "", admins: [], members: [], type: "public"
+						};
+						$scope.goto("home");
+					});
+				}
 			}
 		}
 	};
