@@ -924,15 +924,11 @@ app.controller("dashboardController",($scope,$http,$location) => {
 				},
 				submit: ()=>
 				{
-					$http.post('/api/group/add',{token:token, form: $scope.sidebar.group.edit.form}).then((res)=>
+					$http.post('/api/group/edit',{token:token, form: $scope.sidebar.group.edit.form, id: $scope.sidebar.group.selected._id }).then((res)=>
 					{
 						res = res.data;
 						if(res.err) return notify(res.err,"danger");
-						notify("New group has been added.");
-						$scope.sidebar.group.add.form = 
-						{
-							name : "", description: "", admins: [], members: [], type: "public"
-						};
+						notify(res.mes, "success");
 						$scope.goto("home");
 					});
 				}

@@ -819,6 +819,44 @@ app.post('/api/group/add',(req,res)=>
 		});
 	});
 });
+
+app.post('/api/group/edit',(req,res)=>
+{
+	validate("user",req,res,(id)=>
+	{
+		db.collection('group').findOne({ _id: ObjectId(req.body.id) },(err, result)=>
+		{
+			if(err) throw err;
+			let admins = JSON.parse(JSON.stringify(result.admins));
+			id = JSON.parse(JSON.stringify(id));
+			delete req.body.form._id;
+			if(admins.includes(id))
+			{
+				let form = req.body.form;
+				for( i in form.admins)
+				{
+					form.admins[i]  = ObjectId(form.admins[i]._id);
+				}
+				for( i in form.members)
+				{
+					form.members[i]  = ObjectId(form.members[i]._id);
+				}
+
+
+				db.collection('group').updateOne({ _id: ObjectId(req.body.id) }, { $set : req.body.form }, (err,result) =>
+				{
+					if(err) throw err;
+					res.send({mes: "Group Updated"});
+				});
+			}
+			else
+				res.send({err:"GROUP_PERMISSION_DENIED"});
+		});
+	});
+})
+
+
+
 app.post('/api/group/user',(req,res)=>
 {
 	validate("user",req,res,(id)=>
@@ -995,21 +1033,23 @@ app.post('/api/group/load',(req,res)=>
 					{ $match: { _id : ObjectId(req.body.id)}},
 					{ $lookup : { from: 'user' , localField: 'admins' , foreignField: '_id', as: 'admins' } },
 					{ $unwind: { path:"$admins" , preserveNullAndEmptyArrays: true} },
-					{ $project: { _id: 1, name: 1, description: 1, members: 1, "admins.name": 1 ,"admins._id": 1 } },
+					{ $project: { _id: 1, name: 1, description: 1, members: 1, "admins.name": 1 ,"admins._id": 1, type: 1 } },
 					{ $group: {
 				            _id: "$_id",
 				            name: { $first : "$name"},
+				            type: { $first: "$type" },
 				            description: { $first : "$description"},
 				            members: { $first : "$members"},
 				            admins: { $push : "$admins"},
 				        }
 					},
-					{ $unwind: { path:"$members" , preserveNullAndEmptyArrays: true} },
 					{ $lookup : { from: 'user' , localField: 'members' , foreignField: '_id', as: 'members' } },
-					{ $project: { _id: 1, name: 1, description: 1, admins: 1, "members.name": 1 ,"members._id": 1 } },
+					{ $unwind: { path:"$members" , preserveNullAndEmptyArrays: true} },
+					{ $project: { _id: 1, name: 1, description: 1, admins: 1, "members.name": 1 ,"members._id": 1, type: 1 } },
 					{ $group: {
 				            _id: "$_id",
 				            name: { $first : "$name"},
+				            type: { $first: "$type" },
 				            description: { $first : "$description"},
 				            admins: { $first : "$admins"},
 				            members: { $push : "$members"},
@@ -1018,7 +1058,7 @@ app.post('/api/group/load',(req,res)=>
 				]).toArray((err,result)=>
 				{
 					if(err) throw err;
-					// console.log(result);
+					console.log(result[0].type);
 					res.send(result[0]);
 				});
 			}
