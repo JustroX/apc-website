@@ -722,6 +722,11 @@ app.controller("dashboardController",($scope,$http,$location) => {
 				$scope.sidebar.group.selected  = i;
 				$scope.provider = "group";
 				$scope.goto("home");
+				$('#collapsible-groups').collapse('toggle');
+				setTimeout(()=>
+				{
+					$('#collapsible-properties').collapse('toggle');
+				},1);
 			},
 			add:
 			{
@@ -832,9 +837,11 @@ app.controller("dashboardController",($scope,$http,$location) => {
 					$http.post("/api/group/load",{token:token, id: $scope.sidebar.group.selected._id}).then((res)=>
 					{
 						res = res.data;
+						if(res.err) return notify(res.err,"danger");
 						$scope.sidebar.group.edit.form = res;
 						$scope.goto("group");
 						$scope.sidebar.group.edit.active = true;
+						$('#collapsible-properties').collapse('toggle');
 					});
 				},
 				hide: ()=>
@@ -893,6 +900,7 @@ app.controller("dashboardController",($scope,$http,$location) => {
 					},
 					remove_admin : (i)=>
 					{
+						if($scope.sidebar.group.edit.form.admins.length==1) return;
 						for( let j in $scope.sidebar.group.edit.form.admins )
 						{
 							if($scope.sidebar.group.edit.form.admins[j]._id == i._id)

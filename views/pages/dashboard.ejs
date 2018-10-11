@@ -65,7 +65,7 @@
 		                			</small>
 			                	</div>
 		                	</small>
-			                <ul class="list-group small">
+			                <ul class="list-group small" ng-if='sidebar.group.selected.admins.includes(user._id)'>
 			                	<li style="cursor: pointer;padding: 4px; padding-left: 20px" class="list-group-item site-menu" ng-click='sidebar.group.edit.show()'>Group Settings</li>
 			                	<li style="cursor: pointer;padding: 4px; padding-left: 20px; color: red" class="list-group-item site-menu">Delete Group</li>
 			                </ul>
@@ -269,8 +269,8 @@
 											<hr>
 											Admins
 											<ol> 
-												<li ng-repeat=' i in sidebar.group.edit.form.admins ' style="padding: 5px; text-align: left; padding-left: 10px">
-													<button ng-click='sidebar.group.edit.search.remove_admin(i)' type="button" class="btn btn-sm btn-danger btn-fill" style="width: 20px; height: 20px;padding: 0px"  >X</button>  
+												<li ng-repeat=' i in sidebar.group.edit.form.admins ' style="padding: 5px; text-align: left; padding-left: 10px" >
+													<button ng-disabled='sidebar.group.edit.form.admins.length == 1' ng-click='sidebar.group.edit.search.remove_admin(i)' type="button" class="btn btn-sm btn-danger btn-fill" style="width: 20px; height: 20px;padding: 0px"  >X</button>  
 													{{ i.name.first + " " + i.name.middle + " " + i.name.last }}
 												</li>
 											</ol>
@@ -316,7 +316,8 @@
 												</div>
 												<br>
 												<div class="container">
-													<button type="submit" class="btn btn-fill btn-success">Create Group</button>
+													<button type="submit" class="btn btn-fill btn-success">Save Changes</button>
+													<button type="button" ng-click = 'sidebar.group.edit.delete()' class="btn btn-fill btn-danger">Delete</button>
 												</div>
 											</div>
 										</div>
