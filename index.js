@@ -677,6 +677,18 @@ app.post('/api/search',(req,res)=>{
 		});
 	});
 });
+app.post('/api/search/group',(req,res)=>{
+	validate("user",req,res,(id)=>{
+		let query = req.body.query;
+		let regx  = new RegExp(query,"i");
+		db.collection('group').find({ $or : [ { name : regx } , { description : regx } ]  },{projection:{ name: 1  } }).toArray(
+		(err,result)=>{
+			if(err) throw err;
+			console.log(result);
+			res.send(result.splice(0,5));
+		});
+	});
+});
 
 //follow
 app.post('/api/follow/add',(req,res)=>{

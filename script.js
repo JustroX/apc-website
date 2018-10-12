@@ -559,11 +559,17 @@ app.controller("dashboardController",($scope,$http,$location) => {
 	$scope.addPage("search",(page)=>{
 		page.query = "";
 		page.results = [];
+		page.groups = [];
+
 		page.submit = ()=>
 		{
 			$http.post("/api/search",{token:token, query: page.query}).then((res)=>{
 				res = res.data;
 				page.results =res;
+			});
+			$http.post("/api/search/group",{token:token, query: page.query}).then((res)=>{
+				res = res.data;
+				page.groups =res;
 			});
 		}
 		page.visit = (i)=>
