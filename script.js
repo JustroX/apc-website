@@ -938,6 +938,18 @@ app.controller("dashboardController",($scope,$http,$location) => {
 						$scope.goto("home");
 					});
 				}
+			},
+
+
+			page:
+			{
+				active: false,
+				show : ()=>
+				{
+					$scope.goto("group");
+					$scope.sidebar.group.page.active = true;
+					$('#collapsible-properties').collapse('toggle');
+				}
 			}
 		}
 	};

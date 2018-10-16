@@ -66,6 +66,7 @@
 			                	</div>
 		                	</small>
 			                <ul class="list-group small" ng-if='sidebar.group.selected.admins.includes(user._id)'>
+			                	<li style="cursor: pointer;padding: 4px; padding-left: 20px" class="list-group-item site-menu" ng-click='sidebar.group.page.show()'>View Page</li>
 			                	<li style="cursor: pointer;padding: 4px; padding-left: 20px" class="list-group-item site-menu" ng-click='sidebar.group.edit.show()'>Group Settings</li>
 			                	<li style="cursor: pointer;padding: 4px; padding-left: 20px; color: red" class="list-group-item site-menu">Delete Group</li>
 			                </ul>
@@ -126,7 +127,7 @@
 
 			<div ng-if='is_here("group")'>
 				<!-- GROUPS -->
-				<div class="card" ng-if='!sidebar.group.add.active && !sidebar.group.edit.active'>
+				<div class="card" ng-if='!sidebar.group.add.active && !sidebar.group.edit.active  && !sidebar.group.page.active'>
 					<div class="card-body">
 						<div class="container">
 							<br>
@@ -157,7 +158,7 @@
 					</div>
 				</div>
 
-				<div class="card" ng-if='sidebar.group.add.active'>
+				<div class="card" ng-if='sidebar.group.add.active  && !sidebar.group.page.active  && !sidebar.edit.page.active'>
 					<div class="card-body">
 						<div class="container">
 							<h4>New Group Details
@@ -245,7 +246,7 @@
 				</div>
 
 
-				<div class="card" ng-if='sidebar.group.edit.active'>
+				<div class="card" ng-if='sidebar.group.edit.active  && !sidebar.group.page.active  && !sidebar.group.add.active'>
 					<div class="card-body">
 						<div class="container">
 							<h4>Edit Group Details
@@ -325,6 +326,30 @@
 								</form>
 							</div>
 							<br><br><br>
+						</div>
+					</div>
+				</div>
+
+				<div class="card" ng-if='sidebar.group.page.active  && !sidebar.group.add.active  && !sidebar.edit.page.active'>
+					<div class="card-body">
+						<div class="container">
+							<div class="text-center">
+								<br>
+								<b style="font-size: 23pt">{{sidebar.group.selected.name}}</b><br>
+								<small class="text-muted">This group has {{ sidebar.group.selected.members.length }} non-admin members | {{ sidebar.group.selected.type | capitalize }}</small>
+								<div class="container">
+									<hr>
+									<p>
+										{{ sidebar.group.selected.description }}
+									</p>
+									<hr>
+								</div>
+
+								<button class="btn btn-round">Request to Join</button>
+
+								<br><br>
+
+							</div>
 						</div>
 					</div>
 				</div>
