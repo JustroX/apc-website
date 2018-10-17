@@ -691,13 +691,14 @@ app.controller("dashboardController",($scope,$http,$location) => {
 		{
 			selected : null,
 			list: [],
-			load: ()=>
+			load: (f=()=>{;})=>
 			{
 				$http.post('/api/group/user',{token:token, id: $scope.user._id }).then((res)=>
 				{
 					res = res.data;
 					if(res.err) return notify(res.err,"danger");
 					$scope.sidebar.group.list = res;
+					f();
 				});
 			},
 			load_content_recent : ()=>
@@ -956,7 +957,21 @@ app.controller("dashboardController",($scope,$http,$location) => {
 
 	$scope.sidebar.group.load();
 
-
+	$scope.sidebar.visit_group = (i)=>
+	{
+		$scope.sidebar.group.load(()=>
+			{
+				for(let j of $scope.sidebar.group.list)
+				{
+					if(j._id == i._id)
+					{
+						$scope.sidebar.group.view(j);
+						$scope.sidebar.group.page.show();
+						$scope.pages.search.query="";
+					}
+				}
+			});
+	}
 
 
 
